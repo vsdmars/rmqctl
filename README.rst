@@ -44,8 +44,8 @@ rabbitmq cluster.
 
 
 rmqctl by default loads rmqctl_config.yaml under the working directory.
-rmqctl can loads rmqctl_config.yaml from other location by using
---load path_to_rmqctl_config.yaml
+rmqctl can loads rmqctl_config.yaml from other location by
+using --load path_to_rmqctl_config.yaml
 
 
 ## Usage
