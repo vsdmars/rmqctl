@@ -28,6 +28,7 @@ commands like kubectl.
 ----
 
 ## rmqctl_config.yaml
+
 rmqctl_config.yaml contains connection information to
 rabbitmq cluster.
 
@@ -51,6 +52,8 @@ rmqctl can loads rmqctl_config.yaml from other location by using
 ```
 $ rmqctl --help
 ```
+
+
 
 ```
 NAME:
@@ -93,6 +96,7 @@ GLOBAL OPTIONS:
 
 COPYRIGHT:
    LICENSE information on https://github.com/vsdmars/rmqctl
+
 ```
 
 
