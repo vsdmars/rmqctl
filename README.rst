@@ -1,4 +1,5 @@
 # rmqctl_
+
 =====================
 
 .. All external links are here
@@ -53,8 +54,6 @@ using --load path_to_rmqctl_config.yaml
 ```
 $ rmqctl --help
 ```
-
-
 
 ```
 NAME:
