@@ -1,7 +1,5 @@
 # rmqctl_
 
-=====================
-
 .. All external links are here
 .. _rmqctl: https://github.com/vsdmars/rmqctl
 .. _rabbitmqadmin: https://www.rabbitmq.com/management-cli.html
@@ -29,7 +27,7 @@ commands like kubectl.
 
 ----
 
-## `rmqctl_config.yaml`_
+## rmqctl_config.yaml_
 
 rmqctl_config.yaml contains connection information to
 rabbitmq cluster.
@@ -45,17 +43,17 @@ rabbitmq cluster.
 
 
 rmqctl by default loads rmqctl_config.yaml under the working directory.
-rmqctl can loads rmqctl_config.yaml from other location by
-using --load path_to_rmqctl_config.yaml
+rmqctl can loads rmqctl_config.yaml from other location by using
 
+```
+rmqctl --load path_to_rmqctl_config.yaml COMMANDS
+```
 
 ## Usage
 
 ```
 $ rmqctl --help
-```
 
-```
 NAME:
    rmqctl - tool for controlling rabbitmq cluster.
 
@@ -96,7 +94,6 @@ GLOBAL OPTIONS:
 
 COPYRIGHT:
    LICENSE information on https://github.com/vsdmars/rmqctl
-
 ```
 
 
@@ -104,9 +101,7 @@ COPYRIGHT:
 
 ```
 $ rmqctl consume --help
-```
 
-```
 NAME:
    rmqctl consume - rmqctl [global options] consume [consume options] QUEUE_NAME
 
@@ -128,6 +123,7 @@ OPTIONS:
 ```
 
 Example:
+
 ```
 $ rmqctl consume -d QUEUE_NAME
 ```
