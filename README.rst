@@ -1,4 +1,5 @@
-# rmqctl_
+rmqctl_
+-------
 
 .. All external links are here
 .. _rmqctl: https://github.com/vsdmars/rmqctl
@@ -27,7 +28,8 @@ commands like kubectl.
 
 ----
 
-## rmqctl_config.yaml_
+rmqctl_config.yaml_
+-------------------
 
 rmqctl_config.yaml contains connection information to
 rabbitmq cluster.
@@ -45,85 +47,126 @@ rabbitmq cluster.
 rmqctl by default loads rmqctl_config.yaml under the working directory.
 rmqctl can loads rmqctl_config.yaml from other location by using
 
-```
-rmqctl --load path_to_rmqctl_config.yaml COMMANDS
-```
+::
 
-## Usage
+ rmqctl --load path_to_rmqctl_config.yaml COMMANDS
 
-```
-$ rmqctl --help
+=====
+Usage
+=====
 
-NAME:
-   rmqctl - tool for controlling rabbitmq cluster.
+::
 
-USAGE:
-   rmqctl [global options] command subcommand [subcommand options] [arguments...]
+   $ rmqctl --help
 
-VERSION:
-   v1.0.0
+   NAME:
+      rmqctl - tool for controlling rabbitmq cluster.
 
-DESCRIPTION:
-   rmqctl is a swiss-knife for rabbitmq cluster.
+   USAGE:
+      rmqctl [global options] command subcommand [subcommand options] [arguments...]
 
-AUTHOR:
-   verbalsaint <vsdmars@gmail.com>
+   VERSION:
+      v1.0.0
 
-COMMANDS:
-     create   create resource
-     list     rmqctl [global options] list resource [resource options] [arguments...]
-     delete   rmqctl [global options] delete resource [resource options] [arguments...]
-     update   update resource
-     help, h  Shows a list of commands or help for one command
-   consume:
-     consume  rmqctl [global options] consume [consume options] QUEUE_NAME
-   publish:
-     publish  rmqctl [global options] publish [publish options] EXCHANGE_NAME KEY MESSAGE
+   DESCRIPTION:
+      rmqctl is a swiss-knife for rabbitmq cluster.
 
-GLOBAL OPTIONS:
-   --username value  cluster username
-   --password value  cluster password
-   --host value      cluster host
-   --vhost value     cluster vhost (default: "/")
-   --port value      cluster port (default: 5672)
-   --apiport value   cluster api port (default: 15672)
-   --load value      config file location (default: "~/rmqctl_config.yaml")
-   --debug, -d       run in debug mode
-   --help, -h        show help
-   --version, -v     print the version
+   AUTHOR:
+      verbalsaint <vsdmars@gmail.com>
 
-COPYRIGHT:
-   LICENSE information on https://github.com/vsdmars/rmqctl
-```
+   COMMANDS:
+        create   create resource
+        list     rmqctl [global options] list resource [resource options] [arguments...]
+        delete   rmqctl [global options] delete resource [resource options] [arguments...]
+        update   update resource
+        help, h  Shows a list of commands or help for one command
+      consume:
+        consume  rmqctl [global options] consume [consume options] QUEUE_NAME
+      publish:
+        publish  rmqctl [global options] publish [publish options] EXCHANGE_NAME KEY MESSAGE
+
+   GLOBAL OPTIONS:
+      --username value  cluster username
+      --password value  cluster password
+      --host value      cluster host
+      --vhost value     cluster vhost (default: "/")
+      --port value      cluster port (default: 5672)
+      --apiport value   cluster api port (default: 15672)
+      --load value      config file location (default: "~/rmqctl_config.yaml")
+      --debug, -d       run in debug mode
+      --help, -h        show help
+      --version, -v     print the version
+
+   COPYRIGHT:
+      LICENSE information on https://github.com/vsdmars/rmqctl
 
 
-## Consume message in daemon mode
+list
+----
 
-```
-$ rmqctl consume --help
+::
 
-NAME:
-   rmqctl consume - rmqctl [global options] consume [consume options] QUEUE_NAME
+   $ rmqctl list --help
 
-USAGE:
-   consume queue
+   NAME:
+      rmqctl list - rmqctl list queue/exchange/bind/node/policy/user/vhost
 
-CATEGORY:
-   consume
+   USAGE:
+      rmqctl list command [command options] [arguments...]
 
-DESCRIPTION:
-   rmqctl consume QUEUE_NAME
+   COMMANDS:
+      list:
+        queue     rmqctl [global options] list queue [queue options] [QUEUE_NAME optional]
+        exchange  rmqctl [global options] list exchange [exchange options] [EXCHANGE_NAME optional]
+        bind      rmqctl [global options] list bind [bind options]
+        vhost     rmqctl [global options] list vhost [vhost options] [VHOST_NAME optional]
+        node      rmqctl [global options] list node [node options] [NODE_NAME optional]
+        policy    rmqctl [global options] list policy [policy options] [POLICY_NAME optional]
+        user      rmqctl [global options] list user [user options] [USERNAME optional]
 
-OPTIONS:
-   --daemon, -d               daemon mode
-   --acktype value, -t value  acknowledge type, ack|nack|reject (default: "ack")
-   --autoack, -a              acknowledge by default once receives message
-   --nowait, --nw             begins without waiting cluster to confirm
-   -o value                   output format, plain|json (default: "plain")
-```
+   OPTIONS:
+   --help, -h  show help
 
-Example:
 
-```
-$ rmqctl consume -d QUEUE_NAME
-```
+:Example:
+
+::
+
+ $ rmqctl list queue
+
+   |Name     |Vhost |Durable |AutoDelete |MasterNode |Status |Consumers |Policy      |Messages
+   |TEST_3_Q |/     |false   |false      |rabbit@r3  |       |0         |TEST_3_Q_HA |5
+   |TEST_4_Q |/     |true    |false      |rabbit@r3  |       |0         |TEST_4_Q_HA |0
+
+
+Consume message in daemon mode
+------------------------------
+
+::
+
+   $ rmqctl consume --help
+
+   NAME:
+      rmqctl consume - rmqctl [global options] consume [consume options] QUEUE_NAME
+
+   USAGE:
+      consume queue
+
+   CATEGORY:
+      consume
+
+   DESCRIPTION:
+      rmqctl consume QUEUE_NAME
+
+   OPTIONS:
+      --daemon, -d               daemon mode
+      --acktype value, -t value  acknowledge type, ack|nack|reject (default: "ack")
+      --autoack, -a              acknowledge by default once receives message
+      --nowait, --nw             begins without waiting cluster to confirm
+      -o value                   output format, plain|json (default: "plain")
+
+:Example:
+
+::
+
+   $ rmqctl consume -d QUEUE_NAME
