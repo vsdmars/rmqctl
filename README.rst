@@ -15,8 +15,7 @@ rmqctl_
   :target: ./LICENSE
 .. |release| image:: https://img.shields.io/badge/release-v1.0.0-blue.svg
   :target: https://github.com/vsdmars/rmqctl/tree/v1.0.0
-.. |binary release v1.0.0|
-  :target: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.0
+.. _binary release v1.0.0: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.0
 
 .. ;; And now we continue with the actual content
 
@@ -33,7 +32,7 @@ commands like kubectl.
 Binary Release:
 ------
 
-|binary release v1.0.0|
+`|binary release v1.0.0|`_
 
 
 rmqctl_config.yaml_
