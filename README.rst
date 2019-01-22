@@ -32,7 +32,7 @@ commands like kubectl.
 Binary Release:
 ------
 
-`|binary release v1.0.0|`_
+`binary release v1.0.0`_
 
 
 rmqctl_config.yaml_
