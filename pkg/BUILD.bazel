@@ -1,0 +1,28 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "cli.go",
+        "cmd.go",
+        "format.go",
+        "log.go",
+        "rmqamqp.go",
+        "rmqapi.go",
+        "rmqtypes.go",
+        "signal.go",
+        "validate.go",
+        "version.go",
+    ],
+    importpath = "github.com/vsdmars/rmqctl/pkg",
+    visibility = ["//visibility:public"],
+    deps = [
+        "@com_github_michaelklishin_rabbit_hole//:go_default_library",
+        "@com_github_streadway_amqp//:go_default_library",
+        "@com_github_urfave_cli//altsrc:go_default_library",
+        "@in_gopkg_go_playground_validator_v9//:go_default_library",
+        "@in_gopkg_urfave_cli_v1//:go_default_library",
+        "@org_uber_go_zap//:go_default_library",
+        "@org_uber_go_zap//zapcore:go_default_library",
+    ],
+)

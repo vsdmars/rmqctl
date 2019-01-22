@@ -1,0 +1,29 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, build with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# Ignore backup files.
+*~
+
+# Ignore Vim swap files.
+.*.swp
+
+# bazel build
+/bazel.iml
+# Ignore all bazel-* symlinks. There is no full list since this can change
+# based on the name of the directory bazel is cloned into.
+/bazel-*
+# Ignore outputs generated during Bazel bootstrapping.
+/output/
+
+# todo
+TODO

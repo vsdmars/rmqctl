@@ -1,7 +1,5 @@
-# username: user
-# password: bitnami
-username: jsc
-password: qweasdzxc123
+username: user
+password: bitnami
 port: 5672
 apiport: 15672
 host: "127.0.0.1"

@@ -1,0 +1,42 @@
+language: go
+go:
+  - 1.11.x
+  # - master
+os:
+  - linux
+  # - osx
+services:
+  - rabbitmq
+dist: trusty
+sudo: required
+# xcode8 has jdk8
+# osx_image: xcode8.3
+env:
+  - BAZEL_VERSION=0.21.0
+before_install:
+  - |
+    if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+      OS=darwin
+    else
+      sysctl kernel.unprivileged_userns_clone=1
+      OS=linux
+    fi
+    URL="https://github.com/bazelbuild/bazel/releases/download/${V}/bazel-${V}-installer-${OS}-x86_64.sh"
+    wget -O install.sh "${URL}"
+    chmod +x install.sh
+    ./install.sh --user
+    rm -f install.sh
+install: true
+# script:
+# - env GO111MODULE=on go build
+script:
+  - |
+    bazel \
+      --bazelrc=.bazelrc \
+      --output_base=$HOME/.cache/bazel \
+      build rmqctl
+
+notifications:
+  email:
+    recipients:
+      - vsdmars@gmail.com
