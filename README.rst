@@ -30,7 +30,7 @@ commands like kubectl.
 
 
 Binary Release:
-------
+---------------
 
 `binary release v1.0.0`_
 
@@ -59,122 +59,233 @@ rmqctl loads *rmqctl_config.yaml* from other location by using --load :
 
  rmqctl --load path_to_rmqctl_config.yaml COMMANDS
 
+
+=========
+Supports
+=========
+
+Create
+------
+- queue
+- exchange
+- queue binding
+- exchange binding
+- user
+- vhost
+
+
+List
+----
+- queue
+- exchange
+- queue binding
+- exchange binding
+- user
+- vhost
+- node
+- policy
+
+
+Delete
+------
+- queue
+- exchange
+- queue binding
+- exchange binding
+- user
+- vhost
+- policy
+
+
+Update
+------
+- vhost
+- user
+
+
+Pulish
+------
+- Publish message to exchange with routing key
+
+
+Consume
+-------
+- Consume message with specified acknowledge mode
+- Run as daemon, consuming message to STDOUT
+
+
 =====
 Usage
 =====
+
+Create queue
+------------
+
+::
+
+   $ rmqctl create queue TEST_QUEUE_1
+   done
+   $ rmqctl create queue TEST_QUEUE_2
+   done
+
+
+List all queues
+---------------
+
+::
+
+   $ rmqctl list queue
+   |Name         |Vhost |Durable |AutoDelete |MasterNode |Status |Consumers |Policy |Messages
+   |TEST_QUEUE_1 |/     |false   |false      |rabbit@r1  |       |0         |       |0
+   |TEST_QUEUE_2 |/     |false   |false      |rabbit@r1  |       |0         |       |0
+
+
+
+List particular queue in json
+-----------------------------
+
+::
+
+   $ rmqctl list queue TEST_QUEUE_1 -o json
+
+.. code:: json
+
+   [
+     {
+       "name": "TEST_QUEUE_1",
+       "vhost": "/",
+       "durable": false,
+       "auto_delete": false,
+       "arguments": {},
+       "node": "rabbit@r1",
+       "status": "",
+       "memory": 10576,
+       ...
+       }
+    ]
+
+
+Create exchange
+---------------
+
+::
+
+  $ rmqctl create exchange TEST_EXCHANGE_1 --durable -t fanout
+  done
+
+
+List all exchanges
+------------------
+
+::
+
+  $ rmqctl list exchange
+   |Name               |Vhost |Type    |Durable |AutoDelete
+   |                   |/     |direct  |true    |false
+   |TEST_EXCHANGE_1    |/     |fanout  |true    |false
+   |amq.direct         |/     |direct  |true    |false
+   |amq.fanout         |/     |fanout  |true    |false
+   |amq.headers        |/     |headers |true    |false
+   |amq.match          |/     |headers |true    |false
+   |amq.rabbitmq.trace |/     |topic   |true    |false
+   |amq.topic          |/     |topic   |true    |false
+
+
+List particular exchange in json
+--------------------------------
+
+::
+
+   $ rmqctl list exchange TEST_EXCHANGE_1 -o json
+
+.. code:: json
+
+   {
+     "name": "TEST_EXCHANGE_1",
+     "vhost": "/",
+     "type": "fanout",
+     "durable": true,
+     "auto_delete": false,
+     "internal": false,
+     "arguments": {},
+     "incoming": [],
+     "outgoing": []
+   }
+
+
+Create queue binding
+--------------------
+
+::
+
+  $ rmqctl create bind TEST_QUEUE_1 TEST_EXCHANGE_1 RUN
+  done
+  $ rmqctl create bind TEST_QUEUE_2 TEST_EXCHANGE_1 RUN
+  done
+
+
+List queue binding
+------------------
+
+::
+
+  $ rmqctl list bind
+  |Source          |Destination  |Vhost |Key          |DestinationType
+  |                |TEST_QUEUE_1 |/     |TEST_QUEUE_1 |queue
+  |                |TEST_QUEUE_2 |/     |TEST_QUEUE_2 |queue
+  |TEST_EXCHANGE_1 |TEST_QUEUE_1 |/     |RUN          |queue
+
+
+Publish message to exchange
+---------------------------
+
+Publish message to a fanout exchange, we'll see queues bounded to the
+
+exchange *TEST_EXCHANGE_1* received the message.
+
+::
+
+   $ rmqctl publish TEST_EXCHANGE_1 RUN "This is a test message"
+   done
+
+   $ rmqctl list queue
+   |Name         |Vhost |Durable |AutoDelete |MasterNode |Status |Consumers |Policy |Messages
+   |TEST_QUEUE_1 |/     |false   |false      |rabbit@r1  |       |0         |       |1
+   |TEST_QUEUE_2 |/     |false   |false      |rabbit@r1  |       |0         |       |1
+
+
+Consume queue's messages
+------------------------
+
+::
+
+   $ rmqctl consume TEST_QUEUE_1
+   |Message
+   |This is a test message
+
+
+
+Consume queue's messages in daemon mode
+---------------------------------------
+
+::
+
+   $ rmqctl consume TEST_QUEUE_2 -d
+   |Message
+   |This is a test message
+
+
+Create user/vhost/exchang bind, update user info/vhost tracing etc.
+-------------------------------------------------------------------
+Use --help for specific details.
 
 ::
 
    $ rmqctl --help
 
-   NAME:
-      rmqctl - tool for controlling rabbitmq cluster.
 
-   USAGE:
-      rmqctl [global options] command subcommand [subcommand options] [arguments...]
+Contact
+-------
+Bug, feature request, welcome to shoot me a email at:
 
-   VERSION:
-      v1.0.0
-
-   DESCRIPTION:
-      rmqctl is a swiss-knife for rabbitmq cluster.
-
-   AUTHOR:
-      verbalsaint <vsdmars@gmail.com>
-
-   COMMANDS:
-        create   create resource
-        list     rmqctl [global options] list resource [resource options] [arguments...]
-        delete   rmqctl [global options] delete resource [resource options] [arguments...]
-        update   update resource
-        help, h  Shows a list of commands or help for one command
-      consume:
-        consume  rmqctl [global options] consume [consume options] QUEUE_NAME
-      publish:
-        publish  rmqctl [global options] publish [publish options] EXCHANGE_NAME KEY MESSAGE
-
-   GLOBAL OPTIONS:
-      --username value  cluster username
-      --password value  cluster password
-      --host value      cluster host
-      --vhost value     cluster vhost (default: "/")
-      --port value      cluster port (default: 5672)
-      --apiport value   cluster api port (default: 15672)
-      --load value      config file location (default: "~/rmqctl_config.yaml")
-      --debug, -d       run in debug mode
-      --help, -h        show help
-      --version, -v     print the version
-
-   COPYRIGHT:
-      LICENSE information on https://github.com/vsdmars/rmqctl
-
-
-list
-----
-
-::
-
-   $ rmqctl list --help
-
-   NAME:
-      rmqctl list - rmqctl list queue/exchange/bind/node/policy/user/vhost
-
-   USAGE:
-      rmqctl list command [command options] [arguments...]
-
-   COMMANDS:
-      list:
-        queue     rmqctl [global options] list queue [queue options] [QUEUE_NAME optional]
-        exchange  rmqctl [global options] list exchange [exchange options] [EXCHANGE_NAME optional]
-        bind      rmqctl [global options] list bind [bind options]
-        vhost     rmqctl [global options] list vhost [vhost options] [VHOST_NAME optional]
-        node      rmqctl [global options] list node [node options] [NODE_NAME optional]
-        policy    rmqctl [global options] list policy [policy options] [POLICY_NAME optional]
-        user      rmqctl [global options] list user [user options] [USERNAME optional]
-
-   OPTIONS:
-   --help, -h  show help
-
-
-``Example``
-
-::
-
- $ rmqctl list queue
-
-   |Name     |Vhost |Durable |AutoDelete |MasterNode |Status |Consumers |Policy      |Messages
-   |TEST_3_Q |/     |false   |false      |rabbit@r3  |       |0         |TEST_3_Q_HA |5
-   |TEST_4_Q |/     |true    |false      |rabbit@r3  |       |0         |TEST_4_Q_HA |0
-
-
-Consume message in daemon mode
-------------------------------
-
-::
-
-   $ rmqctl consume --help
-
-   NAME:
-      rmqctl consume - rmqctl [global options] consume [consume options] QUEUE_NAME
-
-   USAGE:
-      consume queue
-
-   CATEGORY:
-      consume
-
-   DESCRIPTION:
-      rmqctl consume QUEUE_NAME
-
-   OPTIONS:
-      --daemon, -d               daemon mode
-      --acktype value, -t value  acknowledge type, ack|nack|reject (default: "ack")
-      --autoack, -a              acknowledge by default once receives message
-      --nowait, --nw             begins without waiting cluster to confirm
-      -o value                   output format, plain|json (default: "plain")
-
-``Example``
-
-::
-
-   $ rmqctl consume -d QUEUE_NAME
+**vsdmars<at>gmail.com**
