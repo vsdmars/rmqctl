@@ -13,6 +13,11 @@ sudo: required
 # osx_image: xcode8.3
 env:
   - BAZEL_VERSION=0.21.0
+  - RABBITMQ_CONFIG_FILE="rabbitmq"
+before_script:
+  - sudo service rabbitmq-server stop
+  - sudo rabbitmq-server &
+  - sleep 10
 before_install:
   - |
     if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
