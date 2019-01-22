@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/verbalsaintmars/rmqctl/cmd"
+	"github.com/vsdmars/rmqctl/cmd"
 )
 
 func main() {

@@ -1,4 +1,4 @@
-module github.com/verbalsaintmars/rmqctl
+module github.com/vsdmars/rmqctl
 
 require (
 	github.com/BurntSushi/toml v0.3.1 // indirect
@@ -6,6 +6,8 @@ require (
 	github.com/go-playground/universal-translator v0.16.0 // indirect
 	github.com/leodido/go-urn v1.1.0 // indirect
 	github.com/michaelklishin/rabbit-hole v1.4.0
+	github.com/onsi/ginkgo v1.7.0 // indirect
+	github.com/onsi/gomega v1.4.3 // indirect
 	github.com/pkg/errors v0.8.1 // indirect
 	github.com/streadway/amqp v0.0.0-20181205114330-a314942b2fd9
 	github.com/stretchr/testify v1.3.0 // indirect

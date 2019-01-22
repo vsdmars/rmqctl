@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/verbalsaintmars/rmqctl/pkg"
+	"github.com/vsdmars/rmqctl/pkg"
 )
 
 // Cmd starts rmqctl
