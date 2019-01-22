@@ -554,13 +554,13 @@ func Cmd() error {
 	}, syscall.SIGTERM)
 
 	cliapp := cli.NewApp()
-	cliapp.Authors = []cli.Author{{Name: "verbalsaint", Email: "jsc9530@gmail.com"}}
+	cliapp.Authors = []cli.Author{{Name: "verbalsaint", Email: "vsdmars@gmail.com"}}
 	cliapp.Copyright = "LICENSE information on https://github.com/vsdmars/rmqctl"
 
 	cliapp.Name = "rmqctl"
 	cliapp.Usage = "tool for controlling rabbitmq cluster."
 	cliapp.UsageText = "rmqctl [global options] command subcommand [subcommand options] [arguments...]"
-	cliapp.Description = "rmqctl is the swiss-knife for rabbitmq cluster."
+	cliapp.Description = "rmqctl is a swiss-knife for rabbitmq cluster."
 	cliapp.Version = rmqctlVersion.string()
 
 	flags := flags(generalAction)
