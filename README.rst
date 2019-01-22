@@ -15,7 +15,8 @@ rmqctl_
   :target: ./LICENSE
 .. |release| image:: https://img.shields.io/badge/release-v1.0.0-blue.svg
   :target: https://github.com/vsdmars/rmqctl/tree/v1.0.0
-
+.. |binary release v1.0.0|
+  :target: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.0
 
 .. ;; And now we continue with the actual content
 
@@ -27,6 +28,13 @@ rmqctl is a Golang version of `rabbitmqadmin`_ with simular
 commands like kubectl.
 
 ----
+
+
+Binary Release:
+------
+
+|binary release v1.0.0|
+
 
 rmqctl_config.yaml_
 -------------------
