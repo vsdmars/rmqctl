@@ -129,7 +129,7 @@ list
    --help, -h  show help
 
 
-:Example:
+``Example``
 
 ::
 
@@ -166,7 +166,7 @@ Consume message in daemon mode
       --nowait, --nw             begins without waiting cluster to confirm
       -o value                   output format, plain|json (default: "plain")
 
-:Example:
+``Example``
 
 ::
 
