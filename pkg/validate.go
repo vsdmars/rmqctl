@@ -24,6 +24,17 @@ func logValidation(err error) {
 	}
 }
 
+func validates(d interface{}) error {
+	if err := validator.New().Struct(d); err != nil {
+		logValidation(err)
+
+		return cli.NewExitError(
+			"command error, use --help to see the proper usage.", 1)
+	}
+
+	return nil
+}
+
 func validateAmqp(ctx *cli.Context) (amqpConnectionType, error) {
 	amqpData := amqpConnectionType{
 		Username: ctx.GlobalString("username"),
@@ -34,11 +45,8 @@ func validateAmqp(ctx *cli.Context) (amqpConnectionType, error) {
 		APIPort:  ctx.GlobalInt("apiport"),
 	}
 
-	v := validator.New()
-	err := v.Struct(amqpData)
-	if err != nil {
-		logValidation(err)
-		return amqpData, cli.NewExitError("command error, use --help to see the proper usage.", 1)
+	if err := validates(amqpData); err != nil {
+		return amqpData, err
 	}
 
 	return amqpData, nil
@@ -91,11 +99,8 @@ func validateCreateQueue(ctx *cli.Context, d *createQueueType) error {
 		}
 	}
 
-	v := validator.New()
-	err = v.Struct(d)
-	if err != nil {
-		logValidation(err)
-		return cli.NewExitError("command error, use --help to see the proper usage.", 1)
+	if err := validates(d); err != nil {
+		return err
 	}
 
 	return nil
@@ -115,11 +120,8 @@ func validateCreateExchange(ctx *cli.Context, d *createExchangeType) error {
 	d.Kind = ctx.String("type")
 	d.ExchangeName = ctx.Args().First()
 
-	v := validator.New()
-	err = v.Struct(d)
-	if err != nil {
-		logValidation(err)
-		return cli.NewExitError("command error, use --help to see the proper usage.", 1)
+	if err := validates(d); err != nil {
+		return err
 	}
 
 	return nil
@@ -137,11 +139,8 @@ func validateCreateBind(ctx *cli.Context, d *createBindType) error {
 	d.ExchangeName = ctx.Args().Get(1)
 	d.Key = ctx.Args().Get(2)
 
-	v := validator.New()
-	err = v.Struct(d)
-	if err != nil {
-		logValidation(err)
-		return cli.NewExitError("command error, use --help to see the proper usage.", 1)
+	if err := validates(d); err != nil {
+		return err
 	}
 
 	return nil
@@ -159,11 +158,8 @@ func validateCreateBindEx(ctx *cli.Context, d *createBindExType) error {
 	d.ToExchange = ctx.Args().Get(1)
 	d.Key = ctx.Args().Get(2)
 
-	v := validator.New()
-	err = v.Struct(d)
-	if err != nil {
-		logValidation(err)
-		return cli.NewExitError("command error, use --help to see the proper usage.", 1)
+	if err := validates(d); err != nil {
+		return err
 	}
 
 	return nil
@@ -180,11 +176,8 @@ func validateCreateUser(ctx *cli.Context, d *createUserType) error {
 	d.RmqPassword = ctx.Args().Get(1)
 	d.Tag = ctx.String("tag")
 
-	v := validator.New()
-	err = v.Struct(d)
-	if err != nil {
-		logValidation(err)
-		return cli.NewExitError("command error, use --help to see the proper usage.", 1)
+	if err := validates(d); err != nil {
+		return err
 	}
 
 	return nil
@@ -200,11 +193,8 @@ func validateCreateVhost(ctx *cli.Context, d *createVhostType) error {
 	d.VhostName = ctx.Args().First()
 	d.Tracing = ctx.Bool("trace")
 
-	v := validator.New()
-	err = v.Struct(d)
-	if err != nil {
-		logValidation(err)
-		return cli.NewExitError("command error, use --help to see the proper usage.", 1)
+	if err := validates(d); err != nil {
+		return err
 	}
 
 	return nil
@@ -220,13 +210,9 @@ func validateListQueue(ctx *cli.Context, d *listQueueType) error {
 	d.Formatter = ctx.String("o")
 	d.QueueName = ctx.Args().First()
 
-	v := validator.New()
-	err = v.Struct(d)
-	if err != nil {
-		logValidation(err)
-		return cli.NewExitError("command error, use --help to see the proper usage.", 1)
+	if err := validates(d); err != nil {
+		return err
 	}
-
 	return nil
 }
 
@@ -240,11 +226,8 @@ func validateListExchange(ctx *cli.Context, d *listExchangeType) error {
 	d.Formatter = ctx.String("o")
 	d.ExchangeName = ctx.Args().First()
 
-	v := validator.New()
-	err = v.Struct(d)
-	if err != nil {
-		logValidation(err)
-		return cli.NewExitError("command error, use --help to see the proper usage.", 1)
+	if err := validates(d); err != nil {
+		return err
 	}
 
 	return nil
@@ -260,11 +243,8 @@ func validateListBind(ctx *cli.Context, d *listBindType) error {
 	d.Formatter = ctx.String("o")
 	d.All = ctx.Bool("all")
 
-	v := validator.New()
-	err = v.Struct(d)
-	if err != nil {
-		logValidation(err)
-		return cli.NewExitError("command error, use --help to see the proper usage.", 1)
+	if err := validates(d); err != nil {
+		return err
 	}
 
 	return nil
@@ -280,11 +260,8 @@ func validateListVhost(ctx *cli.Context, d *listVhostType) error {
 	d.Formatter = ctx.String("o")
 	d.VhostName = ctx.Args().First()
 
-	v := validator.New()
-	err = v.Struct(d)
-	if err != nil {
-		logValidation(err)
-		return cli.NewExitError("command error, use --help to see the proper usage.", 1)
+	if err := validates(d); err != nil {
+		return err
 	}
 
 	return nil
@@ -300,11 +277,8 @@ func validateListNode(ctx *cli.Context, d *listNodeType) error {
 	d.Formatter = ctx.String("o")
 	d.NodeName = ctx.Args().First()
 
-	v := validator.New()
-	err = v.Struct(d)
-	if err != nil {
-		logValidation(err)
-		return cli.NewExitError("command error, use --help to see the proper usage.", 1)
+	if err := validates(d); err != nil {
+		return err
 	}
 
 	return nil
@@ -321,11 +295,8 @@ func validateListPolicy(ctx *cli.Context, d *listPolicyType) error {
 	d.PolicyName = ctx.Args().First()
 	d.Formatter = ctx.String("o")
 
-	v := validator.New()
-	err = v.Struct(d)
-	if err != nil {
-		logValidation(err)
-		return cli.NewExitError("command error, use --help to see the proper usage.", 1)
+	if err := validates(d); err != nil {
+		return err
 	}
 
 	return nil
@@ -341,11 +312,8 @@ func validateListUser(ctx *cli.Context, d *listUserType) error {
 	d.RmqUsername = ctx.Args().First()
 	d.Formatter = ctx.String("o")
 
-	v := validator.New()
-	err = v.Struct(d)
-	if err != nil {
-		logValidation(err)
-		return cli.NewExitError("command error, use --help to see the proper usage.", 1)
+	if err := validates(d); err != nil {
+		return err
 	}
 
 	return nil
@@ -366,11 +334,8 @@ func validateDeleteQueue(ctx *cli.Context, d *deleteQueueType) error {
 		d.IfEmpty = true
 	}
 
-	v := validator.New()
-	err = v.Struct(d)
-	if err != nil {
-		logValidation(err)
-		return cli.NewExitError("command error, use --help to see the proper usage.", 1)
+	if err := validates(d); err != nil {
+		return err
 	}
 
 	return nil
@@ -390,11 +355,8 @@ func validateDeleteExchange(ctx *cli.Context, d *deleteExchangeType) error {
 		d.IfUnuse = true
 	}
 
-	v := validator.New()
-	err = v.Struct(d)
-	if err != nil {
-		logValidation(err)
-		return cli.NewExitError("command error, use --help to see the proper usage.", 1)
+	if err := validates(d); err != nil {
+		return err
 	}
 
 	return nil
@@ -411,11 +373,8 @@ func validateDeleteBind(ctx *cli.Context, d *deleteBindType) error {
 	d.ExchangeName = ctx.Args().Get(1)
 	d.Key = ctx.Args().Get(2)
 
-	v := validator.New()
-	err = v.Struct(d)
-	if err != nil {
-		logValidation(err)
-		return cli.NewExitError("command error, use --help to see the proper usage.", 1)
+	if err := validates(d); err != nil {
+		return err
 	}
 
 	return nil
@@ -433,11 +392,8 @@ func validateDeleteBindEx(ctx *cli.Context, d *deleteBindExType) error {
 	d.ToExchange = ctx.Args().Get(1)
 	d.Key = ctx.Args().Get(2)
 
-	v := validator.New()
-	err = v.Struct(d)
-	if err != nil {
-		logValidation(err)
-		return cli.NewExitError("command error, use --help to see the proper usage.", 1)
+	if err := validates(d); err != nil {
+		return err
 	}
 
 	return nil
@@ -452,11 +408,8 @@ func validateDeletePolicy(ctx *cli.Context, d *deletePolicyType) error {
 	d.amqpConnectionType = amqpData
 	d.PolicyName = ctx.Args().First()
 
-	v := validator.New()
-	err = v.Struct(d)
-	if err != nil {
-		logValidation(err)
-		return cli.NewExitError("command error, use --help to see the proper usage.", 1)
+	if err := validates(d); err != nil {
+		return err
 	}
 
 	return nil
@@ -471,11 +424,8 @@ func validateDeleteUser(ctx *cli.Context, d *deleteUserType) error {
 	d.amqpConnectionType = amqpData
 	d.RmqUsername = ctx.Args().First()
 
-	v := validator.New()
-	err = v.Struct(d)
-	if err != nil {
-		logValidation(err)
-		return cli.NewExitError("command error, use --help to see the proper usage.", 1)
+	if err := validates(d); err != nil {
+		return err
 	}
 
 	return nil
@@ -490,11 +440,8 @@ func validateDeleteVhost(ctx *cli.Context, d *deleteVhostType) error {
 	d.amqpConnectionType = amqpData
 	d.VhostName = ctx.Args().First()
 
-	v := validator.New()
-	err = v.Struct(d)
-	if err != nil {
-		logValidation(err)
-		return cli.NewExitError("command error, use --help to see the proper usage.", 1)
+	if err := validates(d); err != nil {
+		return err
 	}
 
 	return nil
@@ -521,11 +468,8 @@ func validatePublish(ctx *cli.Context, d *publishType) error {
 		}
 	}
 
-	v := validator.New()
-	err = v.Struct(d)
-	if err != nil {
-		logValidation(err)
-		return cli.NewExitError("command error, use --help to see the proper usage.", 1)
+	if err := validates(d); err != nil {
+		return err
 	}
 
 	return nil
@@ -545,11 +489,8 @@ func validateConsume(ctx *cli.Context, d *consumeType) error {
 	d.Daemon = ctx.Bool("daemon")
 	d.Formatter = ctx.String("o")
 
-	v := validator.New()
-	err = v.Struct(d)
-	if err != nil {
-		logValidation(err)
-		return cli.NewExitError("command error, use --help to see the proper usage.", 1)
+	if err := validates(d); err != nil {
+		return err
 	}
 
 	return nil
@@ -566,11 +507,8 @@ func validateUpdateUser(ctx *cli.Context, d *updateUserType) error {
 	d.RmqPassword = ctx.Args().Get(1)
 	d.Tag = ctx.String("tag")
 
-	v := validator.New()
-	err = v.Struct(d)
-	if err != nil {
-		logValidation(err)
-		return cli.NewExitError("command error, use --help to see the proper usage.", 1)
+	if err := validates(d); err != nil {
+		return err
 	}
 
 	return nil
@@ -586,11 +524,8 @@ func validateUpdateVhost(ctx *cli.Context, d *updateVhostType) error {
 	d.VhostName = ctx.Args().First()
 	d.Tracing = ctx.Bool("trace")
 
-	v := validator.New()
-	err = v.Struct(d)
-	if err != nil {
-		logValidation(err)
-		return cli.NewExitError("command error, use --help to see the proper usage.", 1)
+	if err := validates(d); err != nil {
+		return err
 	}
 
 	return nil

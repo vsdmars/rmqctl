@@ -569,8 +569,7 @@ func Cmd() error {
 	cliapp.Flags = flags
 	cliapp.Commands = commands
 
-	err := cliapp.Run(os.Args)
-	if err != nil {
+	if err := cliapp.Run(os.Args); err != nil {
 		logger.Debug("rmqctl encountered error",
 			zap.String("error", err.Error()))
 		return err

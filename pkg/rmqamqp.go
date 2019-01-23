@@ -22,8 +22,7 @@ func noSuchJob(ctx *cli.Context) error {
 func createQueueJob(ctx *cli.Context) error {
 	data := createQueueType{}
 
-	err := validateCreateQueue(ctx, &data)
-	if err != nil {
+	if err := validateCreateQueue(ctx, &data); err != nil {
 		return err
 	}
 
@@ -32,8 +31,7 @@ func createQueueJob(ctx *cli.Context) error {
 		return err
 	}
 
-	err = createQueue(conn, &data)
-	if err != nil {
+	if err = createQueue(conn, &data); err != nil {
 		return err
 	}
 
@@ -43,8 +41,7 @@ func createQueueJob(ctx *cli.Context) error {
 func createExchangeJob(ctx *cli.Context) error {
 	data := createExchangeType{}
 
-	err := validateCreateExchange(ctx, &data)
-	if err != nil {
+	if err := validateCreateExchange(ctx, &data); err != nil {
 		return err
 	}
 
@@ -53,8 +50,7 @@ func createExchangeJob(ctx *cli.Context) error {
 		return err
 	}
 
-	err = createExchange(conn, &data)
-	if err != nil {
+	if err = createExchange(conn, &data); err != nil {
 		return err
 	}
 
@@ -64,8 +60,7 @@ func createExchangeJob(ctx *cli.Context) error {
 func createBindJob(ctx *cli.Context) error {
 	data := createBindType{}
 
-	err := validateCreateBind(ctx, &data)
-	if err != nil {
+	if err := validateCreateBind(ctx, &data); err != nil {
 		return err
 	}
 
@@ -74,8 +69,7 @@ func createBindJob(ctx *cli.Context) error {
 		return err
 	}
 
-	err = createBind(conn, &data)
-	if err != nil {
+	if err = createBind(conn, &data); err != nil {
 		return err
 	}
 
@@ -85,8 +79,7 @@ func createBindJob(ctx *cli.Context) error {
 func createBindExJob(ctx *cli.Context) error {
 	data := createBindExType{}
 
-	err := validateCreateBindEx(ctx, &data)
-	if err != nil {
+	if err := validateCreateBindEx(ctx, &data); err != nil {
 		return err
 	}
 
@@ -95,8 +88,7 @@ func createBindExJob(ctx *cli.Context) error {
 		return err
 	}
 
-	err = createBindEx(conn, &data)
-	if err != nil {
+	if err = createBindEx(conn, &data); err != nil {
 		return err
 	}
 
@@ -106,8 +98,7 @@ func createBindExJob(ctx *cli.Context) error {
 func deleteQueueJob(ctx *cli.Context) error {
 	data := deleteQueueType{}
 
-	err := validateDeleteQueue(ctx, &data)
-	if err != nil {
+	if err := validateDeleteQueue(ctx, &data); err != nil {
 		return err
 	}
 
@@ -116,8 +107,7 @@ func deleteQueueJob(ctx *cli.Context) error {
 		return err
 	}
 
-	err = deleteQueue(conn, &data)
-	if err != nil {
+	if err = deleteQueue(conn, &data); err != nil {
 		return err
 	}
 
@@ -127,8 +117,7 @@ func deleteQueueJob(ctx *cli.Context) error {
 func deleteExchangeJob(ctx *cli.Context) error {
 	data := deleteExchangeType{}
 
-	err := validateDeleteExchange(ctx, &data)
-	if err != nil {
+	if err := validateDeleteExchange(ctx, &data); err != nil {
 		return err
 	}
 
@@ -137,8 +126,7 @@ func deleteExchangeJob(ctx *cli.Context) error {
 		return err
 	}
 
-	err = deleteExchange(conn, &data)
-	if err != nil {
+	if err = deleteExchange(conn, &data); err != nil {
 		return err
 	}
 
@@ -148,8 +136,7 @@ func deleteExchangeJob(ctx *cli.Context) error {
 func deleteBindJob(ctx *cli.Context) error {
 	data := deleteBindType{}
 
-	err := validateDeleteBind(ctx, &data)
-	if err != nil {
+	if err := validateDeleteBind(ctx, &data); err != nil {
 		return err
 	}
 
@@ -158,8 +145,7 @@ func deleteBindJob(ctx *cli.Context) error {
 		return err
 	}
 
-	err = deleteBind(conn, &data)
-	if err != nil {
+	if err = deleteBind(conn, &data); err != nil {
 		return err
 	}
 
@@ -169,8 +155,7 @@ func deleteBindJob(ctx *cli.Context) error {
 func deleteBindExJob(ctx *cli.Context) error {
 	data := deleteBindExType{}
 
-	err := validateDeleteBindEx(ctx, &data)
-	if err != nil {
+	if err := validateDeleteBindEx(ctx, &data); err != nil {
 		return err
 	}
 
@@ -179,8 +164,7 @@ func deleteBindExJob(ctx *cli.Context) error {
 		return err
 	}
 
-	err = deleteBindEx(conn, &data)
-	if err != nil {
+	if err = deleteBindEx(conn, &data); err != nil {
 		return err
 	}
 
@@ -190,8 +174,7 @@ func deleteBindExJob(ctx *cli.Context) error {
 func publishJob(ctx *cli.Context) error {
 	data := publishType{}
 
-	err := validatePublish(ctx, &data)
-	if err != nil {
+	if err := validatePublish(ctx, &data); err != nil {
 		return err
 	}
 
@@ -200,8 +183,7 @@ func publishJob(ctx *cli.Context) error {
 		return err
 	}
 
-	err = publishMsg(conn, &data)
-	if err != nil {
+	if err = publishMsg(conn, &data); err != nil {
 		return err
 	}
 
@@ -211,8 +193,7 @@ func publishJob(ctx *cli.Context) error {
 func consumeJob(ctx *cli.Context) error {
 	data := consumeType{}
 
-	err := validateConsume(ctx, &data)
-	if err != nil {
+	if err := validateConsume(ctx, &data); err != nil {
 		return err
 	}
 
@@ -221,8 +202,7 @@ func consumeJob(ctx *cli.Context) error {
 		return err
 	}
 
-	err = consumeMsg(conn, &data)
-	if err != nil {
+	if err = consumeMsg(conn, &data); err != nil {
 		return err
 	}
 
@@ -272,15 +252,14 @@ func createQueue(conn *amqp.Connection, data *createQueueType) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	_, err = channel.QueueDeclare(
+	if _, err = channel.QueueDeclare(
 		data.QueueName,
 		data.Durable,
 		data.Autodelete,
 		data.Exclusive,
 		data.NoWait,
 		data.Args,
-	)
-	if err != nil {
+	); err != nil {
 		logger.Debug("QueueDeclare failed, channel closed.",
 			zap.String("error", err.Error()))
 
@@ -303,7 +282,7 @@ func createExchange(conn *amqp.Connection, data *createExchangeType) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	err = channel.ExchangeDeclare(
+	if err = channel.ExchangeDeclare(
 		data.ExchangeName,
 		data.Kind,
 		data.Durable,
@@ -311,8 +290,7 @@ func createExchange(conn *amqp.Connection, data *createExchangeType) error {
 		data.Internal,
 		data.NoWait,
 		data.Args,
-	)
-	if err != nil {
+	); err != nil {
 		logger.Debug("ExchangeDeclare failed, channel closed.",
 			zap.String("error", err.Error()))
 
@@ -331,14 +309,13 @@ func createBind(conn *amqp.Connection, data *createBindType) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	err = channel.QueueBind(
+	if err = channel.QueueBind(
 		data.QueueName,
 		data.Key,
 		data.ExchangeName,
 		data.NoWait,
 		data.Args,
-	)
-	if err != nil {
+	); err != nil {
 		logger.Debug("QueueBind failed, channel closed.",
 			zap.String("error", err.Error()))
 
@@ -357,14 +334,13 @@ func createBindEx(conn *amqp.Connection, data *createBindExType) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	err = channel.ExchangeBind(
+	if err = channel.ExchangeBind(
 		data.ToExchange,
 		data.Key,
 		data.FromExchange,
 		data.NoWait,
 		data.Args,
-	)
-	if err != nil {
+	); err != nil {
 		logger.Debug("ExchangeBind failed, channel closed.",
 			zap.String("error", err.Error()))
 
@@ -383,8 +359,7 @@ func deleteQueue(conn *amqp.Connection, data *deleteQueueType) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	_, err = channel.QueueInspect(data.QueueName)
-	if err != nil {
+	if _, err = channel.QueueInspect(data.QueueName); err != nil {
 		logger.Debug("QueueDelete failed, queue does not exist.",
 			zap.String("error", err.Error()))
 
@@ -417,12 +392,11 @@ func deleteExchange(conn *amqp.Connection, data *deleteExchangeType) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	err = channel.ExchangeDelete(
+	if err = channel.ExchangeDelete(
 		data.ExchangeName,
 		data.IfUnuse,
 		data.NoWait,
-	)
-	if err != nil {
+	); err != nil {
 		logger.Debug("ExchangeDelete failed, channel closed.",
 			zap.String("error", err.Error()))
 
@@ -441,21 +415,19 @@ func deleteBind(conn *amqp.Connection, data *deleteBindType) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	_, err = channel.QueueInspect(data.QueueName)
-	if err != nil {
+	if _, err = channel.QueueInspect(data.QueueName); err != nil {
 		logger.Debug("QueueUnbind failed, queue does not exist.",
 			zap.String("error", err.Error()))
 
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	err = channel.QueueUnbind(
+	if err = channel.QueueUnbind(
 		data.QueueName,
 		data.Key,
 		data.ExchangeName,
 		data.Args,
-	)
-	if err != nil {
+	); err != nil {
 		logger.Debug("QueueUnbind failed, channel closed.",
 			zap.String("error", err.Error()))
 
@@ -474,14 +446,13 @@ func deleteBindEx(conn *amqp.Connection, data *deleteBindExType) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	err = channel.ExchangeUnbind(
+	if err = channel.ExchangeUnbind(
 		data.ToExchange,
 		data.Key,
 		data.FromExchange,
 		data.NoWait,
 		data.Args,
-	)
-	if err != nil {
+	); err != nil {
 		logger.Debug("ExchangeUnBind failed, channel closed.",
 			zap.String("error", err.Error()))
 
@@ -500,13 +471,13 @@ func publishMsg(conn *amqp.Connection, data *publishType) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	err = channel.Publish(
+	if err = channel.Publish(
 		data.ExchangeName,
 		data.Key, // routing key
 		data.Mandatory,
 		data.Immediate,
-		data.Message)
-	if err != nil {
+		data.Message,
+	); err != nil {
 		logger.Debug("Publish failed, channel closed.",
 			zap.String("error", err.Error()))
 
