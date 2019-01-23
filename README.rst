@@ -103,7 +103,7 @@ Update
 - user
 
 
-Pulish
+Publish
 ------
 - Publish message to exchange with routing key
 
@@ -111,7 +111,7 @@ Pulish
 Consume
 -------
 - Consume message with specified acknowledge mode
-- Run as daemon, consuming message to STDOUT
+- Run as daemon, consuming message direct to STDOUT
 
 
 =====
@@ -275,7 +275,7 @@ Consume queue's messages in daemon mode
    |This is a test message
 
 
-Create user/vhost/exchang bind, update user info/vhost tracing etc.
+Create user/vhost/exchange bind, update user info/vhost tracing, etc.
 -------------------------------------------------------------------
 Use --help for specific details.
 
@@ -286,6 +286,6 @@ Use --help for specific details.
 
 Contact
 -------
-Bug, feature request, welcome to shoot me a email at:
+Bug, feature requests, welcome to shoot me an email at:
 
 **vsdmars<at>gmail.com**
