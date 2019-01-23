@@ -22,7 +22,7 @@ func noSuchJob(ctx *cli.Context) error {
 func createQueueJob(ctx *cli.Context) error {
 	data := createQueueType{}
 
-	err := validateAndFill(createQueueAction, ctx, &data)
+	err := validateCreateQueue(ctx, &data)
 	if err != nil {
 		return err
 	}
@@ -43,7 +43,7 @@ func createQueueJob(ctx *cli.Context) error {
 func createExchangeJob(ctx *cli.Context) error {
 	data := createExchangeType{}
 
-	err := validateAndFill(createExchangeAction, ctx, &data)
+	err := validateCreateExchange(ctx, &data)
 	if err != nil {
 		return err
 	}
@@ -64,7 +64,7 @@ func createExchangeJob(ctx *cli.Context) error {
 func createBindJob(ctx *cli.Context) error {
 	data := createBindType{}
 
-	err := validateAndFill(createBindAction, ctx, &data)
+	err := validateCreateBind(ctx, &data)
 	if err != nil {
 		return err
 	}
@@ -85,7 +85,7 @@ func createBindJob(ctx *cli.Context) error {
 func createBindExJob(ctx *cli.Context) error {
 	data := createBindExType{}
 
-	err := validateAndFill(createBindExAction, ctx, &data)
+	err := validateCreateBindEx(ctx, &data)
 	if err != nil {
 		return err
 	}
@@ -106,7 +106,7 @@ func createBindExJob(ctx *cli.Context) error {
 func deleteQueueJob(ctx *cli.Context) error {
 	data := deleteQueueType{}
 
-	err := validateAndFill(deleteQueueAction, ctx, &data)
+	err := validateDeleteQueue(ctx, &data)
 	if err != nil {
 		return err
 	}
@@ -127,7 +127,7 @@ func deleteQueueJob(ctx *cli.Context) error {
 func deleteExchangeJob(ctx *cli.Context) error {
 	data := deleteExchangeType{}
 
-	err := validateAndFill(deleteExchangeAction, ctx, &data)
+	err := validateDeleteExchange(ctx, &data)
 	if err != nil {
 		return err
 	}
@@ -148,7 +148,7 @@ func deleteExchangeJob(ctx *cli.Context) error {
 func deleteBindJob(ctx *cli.Context) error {
 	data := deleteBindType{}
 
-	err := validateAndFill(deleteBindAction, ctx, &data)
+	err := validateDeleteBind(ctx, &data)
 	if err != nil {
 		return err
 	}
@@ -169,7 +169,7 @@ func deleteBindJob(ctx *cli.Context) error {
 func deleteBindExJob(ctx *cli.Context) error {
 	data := deleteBindExType{}
 
-	err := validateAndFill(deleteBindExAction, ctx, &data)
+	err := validateDeleteBindEx(ctx, &data)
 	if err != nil {
 		return err
 	}
@@ -190,7 +190,7 @@ func deleteBindExJob(ctx *cli.Context) error {
 func publishJob(ctx *cli.Context) error {
 	data := publishType{}
 
-	err := validateAndFill(publishAction, ctx, &data)
+	err := validatePublish(ctx, &data)
 	if err != nil {
 		return err
 	}
@@ -211,7 +211,7 @@ func publishJob(ctx *cli.Context) error {
 func consumeJob(ctx *cli.Context) error {
 	data := consumeType{}
 
-	err := validateAndFill(consumeAction, ctx, &data)
+	err := validateConsume(ctx, &data)
 	if err != nil {
 		return err
 	}
@@ -529,10 +529,10 @@ func consumeMsg(conn *amqp.Connection, data *consumeType) error {
 	}
 
 	if data.Daemon {
-		return daemonConsume(channel, data)
+		return daemonConsumeF(channel, data)
 	}
 
-	return noneDaemonConsume(channel, data)
+	return noneDaemonConsumeF(channel, data)
 }
 
 func ackFunction(d *amqp.Delivery, data *consumeType) {

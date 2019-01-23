@@ -14,7 +14,6 @@ var (
 	registered = make(map[string]cancelChan)
 )
 
-// regSignalHandler registers handler with specified signals
 func regSignalHandler(handler func(), sig os.Signal) {
 
 	if cancel, ok := registered[sig.String()]; ok {

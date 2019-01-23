@@ -29,7 +29,7 @@ func createQueueHaJob(data *createQueueType) error {
 func createUserJob(ctx *cli.Context) error {
 	data := createUserType{}
 
-	err := validateAndFill(createUserAction, ctx, &data)
+	err := validateCreateUser(ctx, &data)
 	if err != nil {
 		return err
 	}
@@ -50,7 +50,7 @@ func createUserJob(ctx *cli.Context) error {
 func createVhostJob(ctx *cli.Context) error {
 	data := createVhostType{}
 
-	err := validateAndFill(createVhostAction, ctx, &data)
+	err := validateCreateVhost(ctx, &data)
 	if err != nil {
 		return err
 	}
@@ -71,7 +71,7 @@ func createVhostJob(ctx *cli.Context) error {
 func listQueueJob(ctx *cli.Context) error {
 	data := listQueueType{}
 
-	err := validateAndFill(listQueueAction, ctx, &data)
+	err := validateListQueue(ctx, &data)
 	if err != nil {
 		return err
 	}
@@ -92,7 +92,7 @@ func listQueueJob(ctx *cli.Context) error {
 func listExchangeJob(ctx *cli.Context) error {
 	data := listExchangeType{}
 
-	err := validateAndFill(listExchangeAction, ctx, &data)
+	err := validateListExchange(ctx, &data)
 	if err != nil {
 		return err
 	}
@@ -113,7 +113,7 @@ func listExchangeJob(ctx *cli.Context) error {
 func listBindJob(ctx *cli.Context) error {
 	data := listBindType{}
 
-	err := validateAndFill(listBindAction, ctx, &data)
+	err := validateListBind(ctx, &data)
 	if err != nil {
 		return err
 	}
@@ -134,7 +134,7 @@ func listBindJob(ctx *cli.Context) error {
 func listVhostJob(ctx *cli.Context) error {
 	data := listVhostType{}
 
-	err := validateAndFill(listVhostAction, ctx, &data)
+	err := validateListVhost(ctx, &data)
 	if err != nil {
 		return err
 	}
@@ -155,7 +155,7 @@ func listVhostJob(ctx *cli.Context) error {
 func listNodeJob(ctx *cli.Context) error {
 	data := listNodeType{}
 
-	err := validateAndFill(listNodeAction, ctx, &data)
+	err := validateListNode(ctx, &data)
 	if err != nil {
 		return err
 	}
@@ -176,7 +176,7 @@ func listNodeJob(ctx *cli.Context) error {
 func listPolicyJob(ctx *cli.Context) error {
 	data := listPolicyType{}
 
-	err := validateAndFill(listPolicyAction, ctx, &data)
+	err := validateListPolicy(ctx, &data)
 	if err != nil {
 		return err
 	}
@@ -197,7 +197,7 @@ func listPolicyJob(ctx *cli.Context) error {
 func listUserJob(ctx *cli.Context) error {
 	data := listUserType{}
 
-	err := validateAndFill(listUserAction, ctx, &data)
+	err := validateListUser(ctx, &data)
 	if err != nil {
 		return err
 	}
@@ -218,7 +218,7 @@ func listUserJob(ctx *cli.Context) error {
 func deletePolicyJob(ctx *cli.Context) error {
 	data := deletePolicyType{}
 
-	err := validateAndFill(deletePolicyAction, ctx, &data)
+	err := validateDeletePolicy(ctx, &data)
 	if err != nil {
 		return err
 	}
@@ -239,7 +239,7 @@ func deletePolicyJob(ctx *cli.Context) error {
 func deleteUserJob(ctx *cli.Context) error {
 	data := deleteUserType{}
 
-	err := validateAndFill(deleteUserAction, ctx, &data)
+	err := validateDeleteUser(ctx, &data)
 	if err != nil {
 		return err
 	}
@@ -260,7 +260,7 @@ func deleteUserJob(ctx *cli.Context) error {
 func deleteVhostJob(ctx *cli.Context) error {
 	data := deleteVhostType{}
 
-	err := validateAndFill(deleteVhostAction, ctx, &data)
+	err := validateDeleteVhost(ctx, &data)
 	if err != nil {
 		return err
 	}
@@ -281,7 +281,7 @@ func deleteVhostJob(ctx *cli.Context) error {
 func updateUserJob(ctx *cli.Context) error {
 	data := updateUserType{}
 
-	err := validateAndFill(updateUserAction, ctx, &data)
+	err := validateUpdateUser(ctx, &data)
 	if err != nil {
 		return err
 	}
@@ -302,7 +302,7 @@ func updateUserJob(ctx *cli.Context) error {
 func updateVhostJob(ctx *cli.Context) error {
 	data := updateVhostType{}
 
-	err := validateAndFill(updateVhostAction, ctx, &data)
+	err := validateUpdateVhost(ctx, &data)
 	if err != nil {
 		return err
 	}
@@ -483,7 +483,7 @@ func listQueue(conn *rh.Client, data *listQueueType) error {
 			return cli.NewExitError(err.Error(), 1)
 		}
 
-		return formatter(data.Formatter, queueInfo)
+		return detailedQueueInfoF(data.Formatter, queueInfo)
 	}
 
 	queueInfos, err := conn.ListQueuesIn(data.Vhost)
@@ -494,7 +494,7 @@ func listQueue(conn *rh.Client, data *listQueueType) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	return formatter(data.Formatter, queueInfos)
+	return detailedQueueInfoSliceF(data.Formatter, queueInfos)
 }
 
 func listExchange(conn *rh.Client, data *listExchangeType) error {
@@ -508,7 +508,7 @@ func listExchange(conn *rh.Client, data *listExchangeType) error {
 			return cli.NewExitError(err.Error(), 1)
 		}
 
-		return formatter(data.Formatter, exgInfo)
+		return detailedExchangeInfoF(data.Formatter, exgInfo)
 	}
 
 	exgInfos, err := conn.ListExchangesIn(data.Vhost)
@@ -519,7 +519,7 @@ func listExchange(conn *rh.Client, data *listExchangeType) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	return formatter(data.Formatter, exgInfos)
+	return detailedExchangeInfoSliceF(data.Formatter, exgInfos)
 }
 
 func listBind(conn *rh.Client, data *listBindType) error {
@@ -545,7 +545,7 @@ func listBind(conn *rh.Client, data *listBindType) error {
 		}
 	}
 
-	return formatter(data.Formatter, binfos)
+	return bindingInfoF(data.Formatter, binfos)
 }
 
 func listVhost(conn *rh.Client, data *listVhostType) error {
@@ -558,7 +558,7 @@ func listVhost(conn *rh.Client, data *listVhostType) error {
 			return cli.NewExitError(err.Error(), 1)
 		}
 
-		return formatter(data.Formatter, vhostInfo)
+		return vhostInfoF(data.Formatter, vhostInfo)
 	}
 
 	vhostInfos, err := conn.ListVhosts()
@@ -568,7 +568,7 @@ func listVhost(conn *rh.Client, data *listVhostType) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	return formatter(data.Formatter, vhostInfos)
+	return vhostInfoSliceF(data.Formatter, vhostInfos)
 }
 
 func listNode(conn *rh.Client, data *listNodeType) error {
@@ -581,7 +581,7 @@ func listNode(conn *rh.Client, data *listNodeType) error {
 			return cli.NewExitError(err.Error(), 1)
 		}
 
-		return formatter(data.Formatter, nodeInfo)
+		return nodeInfoF(data.Formatter, nodeInfo)
 	}
 
 	nodeInfos, err := conn.ListNodes()
@@ -591,7 +591,7 @@ func listNode(conn *rh.Client, data *listNodeType) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	return formatter(data.Formatter, nodeInfos)
+	return nodeInfoSliceF(data.Formatter, nodeInfos)
 }
 
 func listPolicy(conn *rh.Client, data *listPolicyType) error {
@@ -604,7 +604,7 @@ func listPolicy(conn *rh.Client, data *listPolicyType) error {
 			return cli.NewExitError(err.Error(), 1)
 		}
 
-		return formatter(data.Formatter, policyInfo)
+		return policyInfoF(data.Formatter, policyInfo)
 	}
 
 	if data.All {
@@ -616,7 +616,7 @@ func listPolicy(conn *rh.Client, data *listPolicyType) error {
 			return cli.NewExitError(err.Error(), 1)
 		}
 
-		return formatter(data.Formatter, policyInfos)
+		return policyInfoSliceF(data.Formatter, policyInfos)
 	}
 
 	policyInfos, err := conn.ListPoliciesIn(data.Vhost)
@@ -628,7 +628,7 @@ func listPolicy(conn *rh.Client, data *listPolicyType) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	return formatter(data.Formatter, policyInfos)
+	return policyInfoSliceF(data.Formatter, policyInfos)
 }
 
 func listUser(conn *rh.Client, data *listUserType) error {
@@ -641,7 +641,7 @@ func listUser(conn *rh.Client, data *listUserType) error {
 			return cli.NewExitError(err.Error(), 1)
 		}
 
-		return formatter(data.Formatter, userInfo)
+		return userInfoF(data.Formatter, userInfo)
 	}
 
 	userInfos, err := conn.ListUsers()
@@ -652,7 +652,7 @@ func listUser(conn *rh.Client, data *listUserType) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	return formatter(data.Formatter, userInfos)
+	return userInfoSliceF(data.Formatter, userInfos)
 }
 
 func deletePolicy(conn *rh.Client, data *deletePolicyType) error {

@@ -66,7 +66,7 @@ Supports
 
 Create
 ------
-- queue
+- queue, queue in HA mode(with single command)
 - exchange
 - queue binding
 - exchange binding
@@ -104,7 +104,7 @@ Update
 
 
 Publish
-------
+-------
 - Publish message to exchange with routing key
 
 
@@ -122,10 +122,31 @@ Create queue
 ------------
 
 ::
-
-   $ rmqctl create queue TEST_QUEUE_1
+   // TEST_QUEUE_1 created as durable
+   $ rmqctl create queue TEST_QUEUE_1 --du
    done
-   $ rmqctl create queue TEST_QUEUE_2
+
+   // TEST_QUEUE_2 created as durable and autodelete
+   $ rmqctl create queue TEST_QUEUE_2 --du --ad
+   done
+
+
+Create queue in HA mode
+-----------------------
+
+We can create queue in HA mode.
+
+There are 3 modes: all(default),exactly,nodes
+
+Below command will create queue TEST_QUEUE_3 in HA mode,
+
+which by default it will have slaves in all other rabbitmq nodes.
+
+rmqctl will automatically create queue's HA policy with name: QueueName_HA
+
+::
+
+   $ rmqctl create queue TEST_QUEUE_3 --ha
    done
 
 
@@ -135,10 +156,20 @@ List all queues
 ::
 
    $ rmqctl list queue
-   |Name         |Vhost |Durable |AutoDelete |MasterNode |Status |Consumers |Policy |Messages
-   |TEST_QUEUE_1 |/     |false   |false      |rabbit@r1  |       |0         |       |0
-   |TEST_QUEUE_2 |/     |false   |false      |rabbit@r1  |       |0         |       |0
+   |Name         |Vhost |Durable |AutoDelete |MasterNode |Status |Consumers |Policy          |Messages
+   |TEST_QUEUE_1 |/     |true    |false      |rabbit@r1  |       |0         |                |0
+   |TEST_QUEUE_2 |/     |true    |true       |rabbit@r1  |       |0         |                |0
+   |TEST_QUEUE_3 |/     |true    |true       |rabbit@r1  |       |0         |TEST_QUEUE_3_HA |0
 
+
+List Policy
+-----------
+
+::
+
+   $ rmqctl list policy
+    Name            |Vhost |Pattern      |Priority |ApplyTo |Definition
+   |TEST_QUEUE_3_HA |/     |TEST_QUEUE_3 |0        |queues  |map[ha-mode:all ha-sync-mode:automatic]
 
 
 List particular queue in json
@@ -154,7 +185,7 @@ List particular queue in json
      {
        "name": "TEST_QUEUE_1",
        "vhost": "/",
-       "durable": false,
+       "durable": true,
        "auto_delete": false,
        "arguments": {},
        "node": "rabbit@r1",
@@ -249,9 +280,10 @@ exchange *TEST_EXCHANGE_1* received the message.
    done
 
    $ rmqctl list queue
-   |Name         |Vhost |Durable |AutoDelete |MasterNode |Status |Consumers |Policy |Messages
-   |TEST_QUEUE_1 |/     |false   |false      |rabbit@r1  |       |0         |       |1
-   |TEST_QUEUE_2 |/     |false   |false      |rabbit@r1  |       |0         |       |1
+   |Name         |Vhost |Durable |AutoDelete |MasterNode |Status |Consumers |Policy          |Messages
+   |TEST_QUEUE_1 |/     |true    |false      |rabbit@r1  |       |0         |                |1
+   |TEST_QUEUE_2 |/     |true    |true       |rabbit@r1  |       |0         |                |1
+   |TEST_QUEUE_3 |/     |true    |true       |rabbit@r1  |       |0         |TEST_QUEUE_3_HA |0
 
 
 Consume queue's messages
@@ -276,7 +308,7 @@ Consume queue's messages in daemon mode
 
 
 Create user/vhost/exchange bind, update user info/vhost tracing, etc.
--------------------------------------------------------------------
+---------------------------------------------------------------------
 Use --help for specific details.
 
 ::

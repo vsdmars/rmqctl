@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"reflect"
 	"text/tabwriter"
 
 	rh "github.com/michaelklishin/rabbit-hole"
@@ -17,18 +16,22 @@ const padding = 1
 
 // Darn... Miss C++ generics...
 
-func detailedQueueInfo(format string, v *rh.DetailedQueueInfo) error {
+func jsonFormat(v interface{}) error {
+	b, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		logger.Debug("format output failed")
+
+		return cli.NewExitError(err.Error(), 1)
+	}
+
+	fmt.Println(string(b))
+	return nil
+}
+
+func detailedQueueInfoF(format string, v *rh.DetailedQueueInfo) error {
 
 	if format == "json" {
-		b, err := json.MarshalIndent(v, "", "  ")
-		if err != nil {
-			logger.Debug("format output failed")
-
-			return cli.NewExitError(err.Error(), 1)
-		}
-
-		fmt.Println(string(b))
-		return nil
+		return jsonFormat(v)
 	}
 
 	w := tabwriter.NewWriter(
@@ -59,18 +62,10 @@ func detailedQueueInfo(format string, v *rh.DetailedQueueInfo) error {
 	return nil
 }
 
-func detailedQueueInfoSlice(format string, v []rh.QueueInfo) error {
+func detailedQueueInfoSliceF(format string, v []rh.QueueInfo) error {
 
 	if format == "json" {
-		b, err := json.MarshalIndent(v, "", "  ")
-		if err != nil {
-			logger.Debug("format output failed")
-
-			return cli.NewExitError(err.Error(), 1)
-		}
-
-		fmt.Println(string(b))
-		return nil
+		return jsonFormat(v)
 	}
 
 	w := tabwriter.NewWriter(
@@ -104,18 +99,10 @@ func detailedQueueInfoSlice(format string, v []rh.QueueInfo) error {
 	return nil
 }
 
-func detailedExchangeInfo(format string, v *rh.DetailedExchangeInfo) error {
+func detailedExchangeInfoF(format string, v *rh.DetailedExchangeInfo) error {
 
 	if format == "json" {
-		b, err := json.MarshalIndent(v, "", "  ")
-		if err != nil {
-			logger.Debug("format output failed")
-
-			return cli.NewExitError(err.Error(), 1)
-		}
-
-		fmt.Println(string(b))
-		return nil
+		return jsonFormat(v)
 	}
 
 	w := tabwriter.NewWriter(
@@ -138,18 +125,10 @@ func detailedExchangeInfo(format string, v *rh.DetailedExchangeInfo) error {
 	return nil
 }
 
-func detailedExchangeInfoSlice(format string, v []rh.ExchangeInfo) error {
+func detailedExchangeInfoSliceF(format string, v []rh.ExchangeInfo) error {
 
 	if format == "json" {
-		b, err := json.MarshalIndent(v, "", "  ")
-		if err != nil {
-			logger.Debug("format output failed")
-
-			return cli.NewExitError(err.Error(), 1)
-		}
-
-		fmt.Println(string(b))
-		return nil
+		return jsonFormat(v)
 	}
 
 	w := tabwriter.NewWriter(
@@ -175,18 +154,10 @@ func detailedExchangeInfoSlice(format string, v []rh.ExchangeInfo) error {
 	return nil
 }
 
-func bindingInfo(format string, v []rh.BindingInfo) error {
+func bindingInfoF(format string, v []rh.BindingInfo) error {
 
 	if format == "json" {
-		b, err := json.MarshalIndent(v, "", "  ")
-		if err != nil {
-			logger.Debug("format output failed")
-
-			return cli.NewExitError(err.Error(), 1)
-		}
-
-		fmt.Println(string(b))
-		return nil
+		return jsonFormat(v)
 	}
 
 	w := tabwriter.NewWriter(
@@ -212,18 +183,10 @@ func bindingInfo(format string, v []rh.BindingInfo) error {
 	return nil
 }
 
-func vhostInfo(format string, v *rh.VhostInfo) error {
+func vhostInfoF(format string, v *rh.VhostInfo) error {
 
 	if format == "json" {
-		b, err := json.MarshalIndent(v, "", "  ")
-		if err != nil {
-			logger.Debug("format output failed")
-
-			return cli.NewExitError(err.Error(), 1)
-		}
-
-		fmt.Println(string(b))
-		return nil
+		return jsonFormat(v)
 	}
 
 	w := tabwriter.NewWriter(
@@ -242,18 +205,10 @@ func vhostInfo(format string, v *rh.VhostInfo) error {
 	return nil
 }
 
-func vhostInfoSlice(format string, v []rh.VhostInfo) error {
+func vhostInfoSliceF(format string, v []rh.VhostInfo) error {
 
 	if format == "json" {
-		b, err := json.MarshalIndent(v, "", "  ")
-		if err != nil {
-			logger.Debug("format output failed")
-
-			return cli.NewExitError(err.Error(), 1)
-		}
-
-		fmt.Println(string(b))
-		return nil
+		return jsonFormat(v)
 	}
 
 	w := tabwriter.NewWriter(
@@ -275,18 +230,10 @@ func vhostInfoSlice(format string, v []rh.VhostInfo) error {
 	return nil
 }
 
-func nodeInfo(format string, v *rh.NodeInfo) error {
+func nodeInfoF(format string, v *rh.NodeInfo) error {
 
 	if format == "json" {
-		b, err := json.MarshalIndent(v, "", "  ")
-		if err != nil {
-			logger.Debug("format output failed")
-
-			return cli.NewExitError(err.Error(), 1)
-		}
-
-		fmt.Println(string(b))
-		return nil
+		return jsonFormat(v)
 	}
 
 	w := tabwriter.NewWriter(
@@ -305,18 +252,10 @@ func nodeInfo(format string, v *rh.NodeInfo) error {
 	return nil
 }
 
-func nodeInfoSlice(format string, v []rh.NodeInfo) error {
+func nodeInfoSliceF(format string, v []rh.NodeInfo) error {
 
 	if format == "json" {
-		b, err := json.MarshalIndent(v, "", "  ")
-		if err != nil {
-			logger.Debug("format output failed")
-
-			return cli.NewExitError(err.Error(), 1)
-		}
-
-		fmt.Println(string(b))
-		return nil
+		return jsonFormat(v)
 	}
 
 	w := tabwriter.NewWriter(
@@ -337,18 +276,10 @@ func nodeInfoSlice(format string, v []rh.NodeInfo) error {
 	return nil
 }
 
-func policyInfo(format string, v *rh.Policy) error {
+func policyInfoF(format string, v *rh.Policy) error {
 
 	if format == "json" {
-		b, err := json.MarshalIndent(v, "", "  ")
-		if err != nil {
-			logger.Debug("format output failed")
-
-			return cli.NewExitError(err.Error(), 1)
-		}
-
-		fmt.Println(string(b))
-		return nil
+		return jsonFormat(v)
 	}
 
 	w := tabwriter.NewWriter(
@@ -373,18 +304,10 @@ func policyInfo(format string, v *rh.Policy) error {
 	return nil
 }
 
-func policyInfoSlice(format string, v []rh.Policy) error {
+func policyInfoSliceF(format string, v []rh.Policy) error {
 
 	if format == "json" {
-		b, err := json.MarshalIndent(v, "", "  ")
-		if err != nil {
-			logger.Debug("format output failed")
-
-			return cli.NewExitError(err.Error(), 1)
-		}
-
-		fmt.Println(string(b))
-		return nil
+		return jsonFormat(v)
 	}
 
 	w := tabwriter.NewWriter(
@@ -411,18 +334,10 @@ func policyInfoSlice(format string, v []rh.Policy) error {
 	return nil
 }
 
-func userInfo(format string, v *rh.UserInfo) error {
+func userInfoF(format string, v *rh.UserInfo) error {
 
 	if format == "json" {
-		b, err := json.MarshalIndent(v, "", "  ")
-		if err != nil {
-			logger.Debug("format output failed")
-
-			return cli.NewExitError(err.Error(), 1)
-		}
-
-		fmt.Println(string(b))
-		return nil
+		return jsonFormat(v)
 	}
 
 	w := tabwriter.NewWriter(
@@ -439,18 +354,10 @@ func userInfo(format string, v *rh.UserInfo) error {
 	return nil
 }
 
-func userInfoSlice(format string, v []rh.UserInfo) error {
+func userInfoSliceF(format string, v []rh.UserInfo) error {
 
 	if format == "json" {
-		b, err := json.MarshalIndent(v, "", "  ")
-		if err != nil {
-			logger.Debug("format output failed")
-
-			return cli.NewExitError(err.Error(), 1)
-		}
-
-		fmt.Println(string(b))
-		return nil
+		return jsonFormat(v)
 	}
 
 	w := tabwriter.NewWriter(
@@ -469,43 +376,8 @@ func userInfoSlice(format string, v []rh.UserInfo) error {
 	w.Flush()
 	return nil
 }
-func formatter(format string, data interface{}) error {
-	switch v := data.(type) {
-	case *rh.DetailedQueueInfo:
-		return detailedQueueInfo(format, v)
-	case []rh.QueueInfo:
-		return detailedQueueInfoSlice(format, v)
-	case *rh.DetailedExchangeInfo:
-		return detailedExchangeInfo(format, v)
-	case []rh.ExchangeInfo:
-		return detailedExchangeInfoSlice(format, v)
-	case []rh.BindingInfo:
-		return bindingInfo(format, v)
-	case *rh.VhostInfo:
-		return vhostInfo(format, v)
-	case []rh.VhostInfo:
-		return vhostInfoSlice(format, v)
-	case *rh.NodeInfo:
-		return nodeInfo(format, v)
-	case []rh.NodeInfo:
-		return nodeInfoSlice(format, v)
-	case *rh.Policy:
-		return policyInfo(format, v)
-	case []rh.Policy:
-		return policyInfoSlice(format, v)
-	case *rh.UserInfo:
-		return userInfo(format, v)
-	case []rh.UserInfo:
-		return userInfoSlice(format, v)
-	default:
-		logger.Debug("does not support this formatting type",
-			zap.String("type", reflect.TypeOf(data).Name()))
 
-		return cli.NewExitError("does not support this formatting type", 1)
-	}
-}
-
-func daemonConsume(channel *amqp.Channel, data *consumeType) error {
+func daemonConsumeF(channel *amqp.Channel, data *consumeType) error {
 
 	F := func() error {
 		var w *tabwriter.Writer
@@ -559,7 +431,7 @@ func daemonConsume(channel *amqp.Channel, data *consumeType) error {
 	return F()
 }
 
-func noneDaemonConsume(channel *amqp.Channel, data *consumeType) error {
+func noneDaemonConsumeF(channel *amqp.Channel, data *consumeType) error {
 
 	F := func() error {
 		var w *tabwriter.Writer
