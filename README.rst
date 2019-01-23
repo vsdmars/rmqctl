@@ -122,6 +122,7 @@ Create queue
 ------------
 
 ::
+
    // TEST_QUEUE_1 created as durable
    $ rmqctl create queue TEST_QUEUE_1 --du
    done
