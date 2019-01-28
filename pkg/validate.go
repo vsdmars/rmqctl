@@ -97,11 +97,7 @@ func validateCreateQueue(ctx *cli.Context, d *createQueueType) error {
 		}
 	}
 
-	if err := validates(d); err != nil {
-		return err
-	}
-
-	return nil
+	return validates(d)
 }
 
 func validateCreateExchange(ctx *cli.Context, d *createExchangeType) error {
@@ -116,11 +112,7 @@ func validateCreateExchange(ctx *cli.Context, d *createExchangeType) error {
 	d.Kind = ctx.String("type")
 	d.ExchangeName = ctx.Args().First()
 
-	if err := validates(d); err != nil {
-		return err
-	}
-
-	return nil
+	return validates(d)
 }
 
 func validateCreateBind(ctx *cli.Context, d *createBindType) error {
@@ -135,11 +127,7 @@ func validateCreateBind(ctx *cli.Context, d *createBindType) error {
 	d.DestinationName = ctx.Args().Get(1)
 	d.Key = ctx.Args().Get(2)
 
-	if err := validates(d); err != nil {
-		return err
-	}
-
-	return nil
+	return validates(d)
 }
 
 func validateCreateUser(ctx *cli.Context, d *createUserType) error {
@@ -153,11 +141,7 @@ func validateCreateUser(ctx *cli.Context, d *createUserType) error {
 	d.RmqPassword = ctx.Args().Get(1)
 	d.Tag = ctx.String("tag")
 
-	if err := validates(d); err != nil {
-		return err
-	}
-
-	return nil
+	return validates(d)
 }
 
 func validateCreateVhost(ctx *cli.Context, d *createVhostType) error {
@@ -170,11 +154,7 @@ func validateCreateVhost(ctx *cli.Context, d *createVhostType) error {
 	d.VhostName = ctx.Args().First()
 	d.Tracing = ctx.Bool("trace")
 
-	if err := validates(d); err != nil {
-		return err
-	}
-
-	return nil
+	return validates(d)
 }
 
 func validateListQueue(ctx *cli.Context, d *listQueueType) error {
@@ -187,10 +167,7 @@ func validateListQueue(ctx *cli.Context, d *listQueueType) error {
 	d.Formatter = ctx.String("o")
 	d.QueueName = ctx.Args().First()
 
-	if err := validates(d); err != nil {
-		return err
-	}
-	return nil
+	return validates(d)
 }
 
 func validateListExchange(ctx *cli.Context, d *listExchangeType) error {
@@ -203,11 +180,7 @@ func validateListExchange(ctx *cli.Context, d *listExchangeType) error {
 	d.Formatter = ctx.String("o")
 	d.ExchangeName = ctx.Args().First()
 
-	if err := validates(d); err != nil {
-		return err
-	}
-
-	return nil
+	return validates(d)
 }
 
 func validateListBind(ctx *cli.Context, d *listBindType) error {
@@ -220,11 +193,7 @@ func validateListBind(ctx *cli.Context, d *listBindType) error {
 	d.Formatter = ctx.String("o")
 	d.All = ctx.Bool("all")
 
-	if err := validates(d); err != nil {
-		return err
-	}
-
-	return nil
+	return validates(d)
 }
 
 func validateListVhost(ctx *cli.Context, d *listVhostType) error {
@@ -237,11 +206,7 @@ func validateListVhost(ctx *cli.Context, d *listVhostType) error {
 	d.Formatter = ctx.String("o")
 	d.VhostName = ctx.Args().First()
 
-	if err := validates(d); err != nil {
-		return err
-	}
-
-	return nil
+	return validates(d)
 }
 
 func validateListNode(ctx *cli.Context, d *listNodeType) error {
@@ -254,11 +219,7 @@ func validateListNode(ctx *cli.Context, d *listNodeType) error {
 	d.Formatter = ctx.String("o")
 	d.NodeName = ctx.Args().First()
 
-	if err := validates(d); err != nil {
-		return err
-	}
-
-	return nil
+	return validates(d)
 }
 
 func validateListPolicy(ctx *cli.Context, d *listPolicyType) error {
@@ -272,11 +233,7 @@ func validateListPolicy(ctx *cli.Context, d *listPolicyType) error {
 	d.PolicyName = ctx.Args().First()
 	d.Formatter = ctx.String("o")
 
-	if err := validates(d); err != nil {
-		return err
-	}
-
-	return nil
+	return validates(d)
 }
 
 func validateListUser(ctx *cli.Context, d *listUserType) error {
@@ -289,11 +246,7 @@ func validateListUser(ctx *cli.Context, d *listUserType) error {
 	d.RmqUsername = ctx.Args().First()
 	d.Formatter = ctx.String("o")
 
-	if err := validates(d); err != nil {
-		return err
-	}
-
-	return nil
+	return validates(d)
 }
 
 func validateDeleteQueue(ctx *cli.Context, d *deleteQueueType) error {
@@ -305,11 +258,7 @@ func validateDeleteQueue(ctx *cli.Context, d *deleteQueueType) error {
 	d.amqpConnectionType = amqpData
 	d.QueueName = ctx.Args().First()
 
-	if err := validates(d); err != nil {
-		return err
-	}
-
-	return nil
+	return validates(d)
 }
 
 func validateDeleteExchange(ctx *cli.Context, d *deleteExchangeType) error {
@@ -321,11 +270,7 @@ func validateDeleteExchange(ctx *cli.Context, d *deleteExchangeType) error {
 	d.amqpConnectionType = amqpData
 	d.ExchangeName = ctx.Args().First()
 
-	if err := validates(d); err != nil {
-		return err
-	}
-
-	return nil
+	return validates(d)
 }
 
 func validateDeleteBind(ctx *cli.Context, d *deleteBindType) error {
@@ -340,11 +285,7 @@ func validateDeleteBind(ctx *cli.Context, d *deleteBindType) error {
 	d.DestinationName = ctx.Args().Get(1)
 	d.Key = ctx.Args().Get(2)
 
-	if err := validates(d); err != nil {
-		return err
-	}
-
-	return nil
+	return validates(d)
 }
 
 func validateDeletePolicy(ctx *cli.Context, d *deletePolicyType) error {
@@ -356,11 +297,7 @@ func validateDeletePolicy(ctx *cli.Context, d *deletePolicyType) error {
 	d.amqpConnectionType = amqpData
 	d.PolicyName = ctx.Args().First()
 
-	if err := validates(d); err != nil {
-		return err
-	}
-
-	return nil
+	return validates(d)
 }
 
 func validateDeleteUser(ctx *cli.Context, d *deleteUserType) error {
@@ -372,11 +309,7 @@ func validateDeleteUser(ctx *cli.Context, d *deleteUserType) error {
 	d.amqpConnectionType = amqpData
 	d.RmqUsername = ctx.Args().First()
 
-	if err := validates(d); err != nil {
-		return err
-	}
-
-	return nil
+	return validates(d)
 }
 
 func validateDeleteVhost(ctx *cli.Context, d *deleteVhostType) error {
@@ -388,11 +321,7 @@ func validateDeleteVhost(ctx *cli.Context, d *deleteVhostType) error {
 	d.amqpConnectionType = amqpData
 	d.VhostName = ctx.Args().First()
 
-	if err := validates(d); err != nil {
-		return err
-	}
-
-	return nil
+	return validates(d)
 }
 
 func validatePublish(ctx *cli.Context, d *publishType) error {
@@ -416,11 +345,7 @@ func validatePublish(ctx *cli.Context, d *publishType) error {
 		}
 	}
 
-	if err := validates(d); err != nil {
-		return err
-	}
-
-	return nil
+	return validates(d)
 }
 
 func validateConsume(ctx *cli.Context, d *consumeType) error {
@@ -437,11 +362,7 @@ func validateConsume(ctx *cli.Context, d *consumeType) error {
 	d.Daemon = ctx.Bool("daemon")
 	d.Formatter = ctx.String("o")
 
-	if err := validates(d); err != nil {
-		return err
-	}
-
-	return nil
+	return validates(d)
 }
 
 func validateUpdateUser(ctx *cli.Context, d *updateUserType) error {
@@ -455,11 +376,7 @@ func validateUpdateUser(ctx *cli.Context, d *updateUserType) error {
 	d.RmqPassword = ctx.Args().Get(1)
 	d.Tag = ctx.String("tag")
 
-	if err := validates(d); err != nil {
-		return err
-	}
-
-	return nil
+	return validates(d)
 }
 
 func validateUpdateVhost(ctx *cli.Context, d *updateVhostType) error {
@@ -472,9 +389,5 @@ func validateUpdateVhost(ctx *cli.Context, d *updateVhostType) error {
 	d.VhostName = ctx.Args().First()
 	d.Tracing = ctx.Bool("trace")
 
-	if err := validates(d); err != nil {
-		return err
-	}
-
-	return nil
+	return validates(d)
 }

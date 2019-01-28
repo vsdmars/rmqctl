@@ -16,11 +16,7 @@ func createQueueJob(ctx *cli.Context) error {
 		return err
 	}
 
-	if err = createQueue(conn, &data); err != nil {
-		return err
-	}
-
-	return nil
+	return createQueue(conn, &data)
 }
 
 func createExchangeJob(ctx *cli.Context) error {
@@ -35,11 +31,7 @@ func createExchangeJob(ctx *cli.Context) error {
 		return err
 	}
 
-	if err = createExchange(conn, &data); err != nil {
-		return err
-	}
-
-	return nil
+	return createExchange(conn, &data)
 }
 
 func createBindJob(ctx *cli.Context) error {
@@ -54,11 +46,7 @@ func createBindJob(ctx *cli.Context) error {
 		return err
 	}
 
-	if err = createBind(conn, &data); err != nil {
-		return err
-	}
-
-	return nil
+	return createBind(conn, &data)
 }
 
 func createUserJob(ctx *cli.Context) error {
@@ -74,12 +62,7 @@ func createUserJob(ctx *cli.Context) error {
 		return err
 	}
 
-	err = createUser(conn, &data)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return createUser(conn, &data)
 }
 
 func createVhostJob(ctx *cli.Context) error {
@@ -95,12 +78,7 @@ func createVhostJob(ctx *cli.Context) error {
 		return err
 	}
 
-	err = createVhost(conn, &data)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return createVhost(conn, &data)
 }
 
 func listQueueJob(ctx *cli.Context) error {
@@ -116,12 +94,7 @@ func listQueueJob(ctx *cli.Context) error {
 		return err
 	}
 
-	err = listQueue(conn, &data)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return listQueue(conn, &data)
 }
 
 func listExchangeJob(ctx *cli.Context) error {
@@ -137,12 +110,7 @@ func listExchangeJob(ctx *cli.Context) error {
 		return err
 	}
 
-	err = listExchange(conn, &data)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return listExchange(conn, &data)
 }
 
 func listBindJob(ctx *cli.Context) error {
@@ -158,12 +126,7 @@ func listBindJob(ctx *cli.Context) error {
 		return err
 	}
 
-	err = listBind(conn, &data)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return listBind(conn, &data)
 }
 
 func listVhostJob(ctx *cli.Context) error {
@@ -179,12 +142,7 @@ func listVhostJob(ctx *cli.Context) error {
 		return err
 	}
 
-	err = listVhost(conn, &data)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return listVhost(conn, &data)
 }
 
 func listNodeJob(ctx *cli.Context) error {
@@ -200,12 +158,7 @@ func listNodeJob(ctx *cli.Context) error {
 		return err
 	}
 
-	err = listNode(conn, &data)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return listNode(conn, &data)
 }
 
 func listPolicyJob(ctx *cli.Context) error {
@@ -221,12 +174,7 @@ func listPolicyJob(ctx *cli.Context) error {
 		return err
 	}
 
-	err = listPolicy(conn, &data)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return listPolicy(conn, &data)
 }
 
 func listUserJob(ctx *cli.Context) error {
@@ -242,12 +190,7 @@ func listUserJob(ctx *cli.Context) error {
 		return err
 	}
 
-	err = listUser(conn, &data)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return listUser(conn, &data)
 }
 
 func deleteQueueJob(ctx *cli.Context) error {
@@ -262,11 +205,7 @@ func deleteQueueJob(ctx *cli.Context) error {
 		return err
 	}
 
-	if err = deleteQueue(conn, &data); err != nil {
-		return err
-	}
-
-	return nil
+	return deleteQueue(conn, &data)
 }
 
 func deleteExchangeJob(ctx *cli.Context) error {
@@ -281,11 +220,7 @@ func deleteExchangeJob(ctx *cli.Context) error {
 		return err
 	}
 
-	if err = deleteExchange(conn, &data); err != nil {
-		return err
-	}
-
-	return nil
+	return deleteExchange(conn, &data)
 }
 
 func deleteBindJob(ctx *cli.Context) error {
@@ -300,11 +235,7 @@ func deleteBindJob(ctx *cli.Context) error {
 		return err
 	}
 
-	if err = deleteBind(conn, &data); err != nil {
-		return err
-	}
-
-	return nil
+	return deleteBind(conn, &data)
 }
 
 func deletePolicyJob(ctx *cli.Context) error {
@@ -320,12 +251,7 @@ func deletePolicyJob(ctx *cli.Context) error {
 		return err
 	}
 
-	err = deletePolicy(conn, &data)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return deletePolicy(conn, &data)
 }
 
 func deleteUserJob(ctx *cli.Context) error {
@@ -341,12 +267,7 @@ func deleteUserJob(ctx *cli.Context) error {
 		return err
 	}
 
-	err = deleteUser(conn, &data)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return deleteUser(conn, &data)
 }
 
 func deleteVhostJob(ctx *cli.Context) error {
@@ -362,12 +283,7 @@ func deleteVhostJob(ctx *cli.Context) error {
 		return err
 	}
 
-	err = deleteVhost(conn, &data)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return deleteVhost(conn, &data)
 }
 
 func updateUserJob(ctx *cli.Context) error {
@@ -383,12 +299,7 @@ func updateUserJob(ctx *cli.Context) error {
 		return err
 	}
 
-	err = updateUser(conn, &data)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return updateUser(conn, &data)
 }
 
 func updateVhostJob(ctx *cli.Context) error {
@@ -404,10 +315,5 @@ func updateVhostJob(ctx *cli.Context) error {
 		return err
 	}
 
-	err = updateVhost(conn, &data)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return updateVhost(conn, &data)
 }
