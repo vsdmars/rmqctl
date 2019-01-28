@@ -16,83 +16,127 @@ const padding = 1
 
 // Darn... Miss C++ generics...
 
-func jsonFormat(v interface{}) error {
-	b, err := json.MarshalIndent(v, "", "  ")
-	if err != nil {
-		logger.Debug("format output failed")
+func jsonFormat(v interface{}, raw bool) error {
+	var output []byte
+	var err error
 
-		return cli.NewExitError(err.Error(), 1)
+	if raw {
+		output, err = json.Marshal(v)
+		if err != nil {
+			logger.Debug("format output failed")
+
+			return cli.NewExitError(err.Error(), 1)
+		}
+	} else {
+		output, err = json.MarshalIndent(v, "", "  ")
+		if err != nil {
+			logger.Debug("format output failed")
+
+			return cli.NewExitError(err.Error(), 1)
+		}
 	}
 
-	fmt.Println(string(b))
+	fmt.Println(string(output))
 	return nil
 }
 
 func detailedQueueInfoF(format string, v *rh.DetailedQueueInfo) error {
-
-	if format == "json" {
-		return jsonFormat(v)
-	}
-
 	w := tabwriter.NewWriter(
 		os.Stdout, 0, 0, padding, ' ', tabwriter.StripEscape)
 
-	fmt.Fprintf(w, "|%v\t|%v\t|%v\t|%v\t|%v\t|%v\t|%v\t|%v\t|%v\n",
-		"Name",
-		"Vhost",
-		"Durable",
-		"AutoDelete",
-		"MasterNode",
-		"Status",
-		"Consumers",
-		"Policy",
-		"Messages")
-	fmt.Fprintf(w, "|%v\t|%v\t|%v\t|%v\t|%v\t|%v\t|%v\t|%v\t|%v\n",
-		v.Name,
-		v.Vhost,
-		v.Durable,
-		v.AutoDelete,
-		v.Node,
-		v.Status,
-		v.Consumers,
-		v.Policy,
-		v.Messages)
+	switch format {
+	case "json":
+		return jsonFormat(v, false)
+	case "rawjson":
+		return jsonFormat(v, true)
+	case "plain":
+		fmt.Fprintf(w, "|%v\t|%v\t|%v\t|%v\t|%v\t|%v\t|%v\t|%v\t|%v\n",
+			"Name",
+			"Vhost",
+			"Durable",
+			"AutoDelete",
+			"MasterNode",
+			"Status",
+			"Consumers",
+			"Policy",
+			"Messages")
+
+		fmt.Fprintf(w, "|%v\t|%v\t|%v\t|%v\t|%v\t|%v\t|%v\t|%v\t|%v\n",
+			v.Name,
+			v.Vhost,
+			v.Durable,
+			v.AutoDelete,
+			v.Node,
+			v.Status,
+			v.Consumers,
+			v.Policy,
+			v.Messages)
+
+	default: // bash
+		fmt.Fprintf(w, "%v\t%v\t%v\t%v\t%v\t%v\t%v\t%v\t%v\n",
+			v.Name,
+			v.Vhost,
+			v.Durable,
+			v.AutoDelete,
+			v.Node,
+			v.Status,
+			v.Consumers,
+			v.Policy,
+			v.Messages)
+	}
 
 	w.Flush()
 	return nil
 }
 
 func detailedQueueInfoSliceF(format string, v []rh.QueueInfo) error {
-
-	if format == "json" {
-		return jsonFormat(v)
-	}
-
 	w := tabwriter.NewWriter(
 		os.Stdout, 0, 0, padding, ' ', tabwriter.StripEscape)
 
-	fmt.Fprintf(w, "|%v\t|%v\t|%v\t|%v\t|%v\t|%v\t|%v\t|%v\t|%v\n",
-		"Name",
-		"Vhost",
-		"Durable",
-		"AutoDelete",
-		"MasterNode",
-		"Status",
-		"Consumers",
-		"Policy",
-		"Messages")
-
-	for _, sv := range v {
+	switch format {
+	case "json":
+		return jsonFormat(v, false)
+	case "rawjson":
+		return jsonFormat(v, true)
+	case "plain":
 		fmt.Fprintf(w, "|%v\t|%v\t|%v\t|%v\t|%v\t|%v\t|%v\t|%v\t|%v\n",
-			sv.Name,
-			sv.Vhost,
-			sv.Durable,
-			sv.AutoDelete,
-			sv.Node,
-			sv.Status,
-			sv.Consumers,
-			sv.Policy,
-			sv.Messages)
+			"Name",
+			"Vhost",
+			"Durable",
+			"AutoDelete",
+			"MasterNode",
+			"Status",
+			"Consumers",
+			"Policy",
+			"Messages")
+
+		for _, sv := range v {
+			fmt.Fprintf(w, "|%v\t|%v\t|%v\t|%v\t|%v\t|%v\t|%v\t|%v\t|%v\n",
+				sv.Name,
+				sv.Vhost,
+				sv.Durable,
+				sv.AutoDelete,
+				sv.Node,
+				sv.Status,
+				sv.Consumers,
+				sv.Policy,
+				sv.Messages)
+		}
+
+	default:
+		for _, sv := range v {
+			fmt.Fprintf(w, "%v\t%v\t%v\t%v\t%v\t%v\t%v\t%v\t%v\n",
+				sv.Name,
+				sv.Vhost,
+				sv.Durable,
+				sv.AutoDelete,
+				sv.Node,
+				sv.Status,
+				sv.Consumers,
+				sv.Policy,
+				sv.Messages)
+		}
+
 	}
 
 	w.Flush()
@@ -100,54 +144,75 @@ func detailedQueueInfoSliceF(format string, v []rh.QueueInfo) error {
 }
 
 func detailedExchangeInfoF(format string, v *rh.DetailedExchangeInfo) error {
-
-	if format == "json" {
-		return jsonFormat(v)
-	}
-
 	w := tabwriter.NewWriter(
 		os.Stdout, 0, 0, padding, ' ', tabwriter.StripEscape)
 
-	fmt.Fprintf(w, "|%v\t|%v\t|%v\t|%v\t|%v\n",
-		"Name",
-		"Vhost",
-		"Type",
-		"Durable",
-		"AutoDelete")
-	fmt.Fprintf(w, "|%v\t|%v\t|%v\t|%v\t|%v\n",
-		v.Name,
-		v.Vhost,
-		v.Type,
-		v.Durable,
-		v.AutoDelete)
+	switch format {
+	case "json":
+		return jsonFormat(v, false)
+	case "rawjson":
+		return jsonFormat(v, true)
+	case "plain":
+		fmt.Fprintf(w, "|%v\t|%v\t|%v\t|%v\t|%v\n",
+			"Name",
+			"Vhost",
+			"Type",
+			"Durable",
+			"AutoDelete")
+
+		fmt.Fprintf(w, "|%v\t|%v\t|%v\t|%v\t|%v\n",
+			v.Name,
+			v.Vhost,
+			v.Type,
+			v.Durable,
+			v.AutoDelete)
+	default:
+		fmt.Fprintf(w, "%v\t%v\t%v\t%v\t%v\n",
+			v.Name,
+			v.Vhost,
+			v.Type,
+			v.Durable,
+			v.AutoDelete)
+	}
 
 	w.Flush()
 	return nil
 }
 
 func detailedExchangeInfoSliceF(format string, v []rh.ExchangeInfo) error {
-
-	if format == "json" {
-		return jsonFormat(v)
-	}
-
 	w := tabwriter.NewWriter(
 		os.Stdout, 0, 0, padding, ' ', tabwriter.StripEscape)
 
-	fmt.Fprintf(w, "|%v\t|%v\t|%v\t|%v\t|%v\n",
-		"Name",
-		"Vhost",
-		"Type",
-		"Durable",
-		"AutoDelete")
-
-	for _, sv := range v {
+	switch format {
+	case "json":
+		return jsonFormat(v, false)
+	case "rawjson":
+		return jsonFormat(v, true)
+	case "plain":
 		fmt.Fprintf(w, "|%v\t|%v\t|%v\t|%v\t|%v\n",
-			sv.Name,
-			sv.Vhost,
-			sv.Type,
-			sv.Durable,
-			sv.AutoDelete)
+			"Name",
+			"Vhost",
+			"Type",
+			"Durable",
+			"AutoDelete")
+
+		for _, sv := range v {
+			fmt.Fprintf(w, "|%v\t|%v\t|%v\t|%v\t|%v\n",
+				sv.Name,
+				sv.Vhost,
+				sv.Type,
+				sv.Durable,
+				sv.AutoDelete)
+		}
+	default:
+		for _, sv := range v {
+			fmt.Fprintf(w, "%v\t%v\t%v\t%v\t%v\n",
+				sv.Name,
+				sv.Vhost,
+				sv.Type,
+				sv.Durable,
+				sv.AutoDelete)
+		}
 	}
 
 	w.Flush()
@@ -155,28 +220,39 @@ func detailedExchangeInfoSliceF(format string, v []rh.ExchangeInfo) error {
 }
 
 func bindingInfoF(format string, v []rh.BindingInfo) error {
-
-	if format == "json" {
-		return jsonFormat(v)
-	}
-
 	w := tabwriter.NewWriter(
 		os.Stdout, 0, 0, padding, ' ', tabwriter.StripEscape)
 
-	fmt.Fprintf(w, "|%v\t|%v\t|%v\t|%v\t|%v\n",
-		"Source",
-		"Destination",
-		"Vhost",
-		"Key",
-		"DestinationType")
-
-	for _, sv := range v {
+	switch format {
+	case "json":
+		return jsonFormat(v, false)
+	case "rawjson":
+		return jsonFormat(v, true)
+	case "plain":
 		fmt.Fprintf(w, "|%v\t|%v\t|%v\t|%v\t|%v\n",
-			sv.Source,
-			sv.Destination,
-			sv.Vhost,
-			sv.RoutingKey,
-			sv.DestinationType)
+			"Source",
+			"Destination",
+			"Vhost",
+			"Key",
+			"DestinationType")
+
+		for _, sv := range v {
+			fmt.Fprintf(w, "|%v\t|%v\t|%v\t|%v\t|%v\n",
+				sv.Source,
+				sv.Destination,
+				sv.Vhost,
+				sv.RoutingKey,
+				sv.DestinationType)
+		}
+	default:
+		for _, sv := range v {
+			fmt.Fprintf(w, "%v\t%v\t%v\t%v\t%v\n",
+				sv.Source,
+				sv.Destination,
+				sv.Vhost,
+				sv.RoutingKey,
+				sv.DestinationType)
+		}
 	}
 
 	w.Flush()
@@ -184,46 +260,63 @@ func bindingInfoF(format string, v []rh.BindingInfo) error {
 }
 
 func vhostInfoF(format string, v *rh.VhostInfo) error {
-
-	if format == "json" {
-		return jsonFormat(v)
-	}
-
 	w := tabwriter.NewWriter(
 		os.Stdout, 0, 0, padding, ' ', tabwriter.StripEscape)
 
-	fmt.Fprintf(w, "|%v\t|%v\t|%v\n",
-		"Name",
-		"Tracing",
-		"Messages")
-	fmt.Fprintf(w, "|%v\t|%v\t|%v\n",
-		v.Name,
-		v.Tracing,
-		v.Messages)
+	switch format {
+	case "json":
+		return jsonFormat(v, false)
+	case "rawjson":
+		return jsonFormat(v, true)
+	case "plain":
+		fmt.Fprintf(w, "|%v\t|%v\t|%v\n",
+			"Name",
+			"Tracing",
+			"Messages")
+
+		fmt.Fprintf(w, "|%v\t|%v\t|%v\n",
+			v.Name,
+			v.Tracing,
+			v.Messages)
+	default:
+		fmt.Fprintf(w, "%v\t%v\t%v\n",
+			v.Name,
+			v.Tracing,
+			v.Messages)
+	}
 
 	w.Flush()
 	return nil
 }
 
 func vhostInfoSliceF(format string, v []rh.VhostInfo) error {
-
-	if format == "json" {
-		return jsonFormat(v)
-	}
-
 	w := tabwriter.NewWriter(
 		os.Stdout, 0, 0, padding, ' ', tabwriter.StripEscape)
 
-	fmt.Fprintf(w, "|%v\t|%v\t|%v\n",
-		"Name",
-		"Tracing",
-		"Messages")
-
-	for _, sv := range v {
+	switch format {
+	case "json":
+		return jsonFormat(v, false)
+	case "rawjson":
+		return jsonFormat(v, true)
+	case "plain":
 		fmt.Fprintf(w, "|%v\t|%v\t|%v\n",
-			sv.Name,
-			sv.Tracing,
-			sv.Messages)
+			"Name",
+			"Tracing",
+			"Messages")
+
+		for _, sv := range v {
+			fmt.Fprintf(w, "|%v\t|%v\t|%v\n",
+				sv.Name,
+				sv.Tracing,
+				sv.Messages)
+		}
+	default:
+		for _, sv := range v {
+			fmt.Fprintf(w, "%v\t%v\t%v\n",
+				sv.Name,
+				sv.Tracing,
+				sv.Messages)
+		}
 	}
 
 	w.Flush()
@@ -231,45 +324,63 @@ func vhostInfoSliceF(format string, v []rh.VhostInfo) error {
 }
 
 func nodeInfoF(format string, v *rh.NodeInfo) error {
-
-	if format == "json" {
-		return jsonFormat(v)
-	}
-
 	w := tabwriter.NewWriter(
 		os.Stdout, 0, 0, padding, ' ', tabwriter.StripEscape)
 
-	fmt.Fprintf(w, "|%v\t|%v\t|%v\n",
-		"Name",
-		"NodeType",
-		"IsRunning")
-	fmt.Fprintf(w, "|%v\t|%v\t|%v\n",
-		v.Name,
-		v.NodeType,
-		v.IsRunning)
+	switch format {
+	case "json":
+		return jsonFormat(v, false)
+	case "rawjson":
+		return jsonFormat(v, true)
+	case "plain":
+		fmt.Fprintf(w, "|%v\t|%v\t|%v\n",
+			"Name",
+			"NodeType",
+			"IsRunning")
+
+		fmt.Fprintf(w, "|%v\t|%v\t|%v\n",
+			v.Name,
+			v.NodeType,
+			v.IsRunning)
+	default:
+		fmt.Fprintf(w, "%v\t%v\t%v\n",
+			v.Name,
+			v.NodeType,
+			v.IsRunning)
+	}
 
 	w.Flush()
 	return nil
 }
 
 func nodeInfoSliceF(format string, v []rh.NodeInfo) error {
-
-	if format == "json" {
-		return jsonFormat(v)
-	}
-
 	w := tabwriter.NewWriter(
 		os.Stdout, 0, 0, padding, ' ', tabwriter.StripEscape)
-	fmt.Fprintf(w, "|%v\t|%v\t|%v\n",
-		"Name",
-		"NodeType",
-		"IsRunning")
 
-	for _, sv := range v {
+	switch format {
+	case "json":
+		return jsonFormat(v, false)
+	case "rawjson":
+		return jsonFormat(v, true)
+	case "plain":
 		fmt.Fprintf(w, "|%v\t|%v\t|%v\n",
-			sv.Name,
-			sv.NodeType,
-			sv.IsRunning)
+			"Name",
+			"NodeType",
+			"IsRunning")
+
+		for _, sv := range v {
+			fmt.Fprintf(w, "|%v\t|%v\t|%v\n",
+				sv.Name,
+				sv.NodeType,
+				sv.IsRunning)
+		}
+	default:
+		for _, sv := range v {
+			fmt.Fprintf(w, "%v\t%v\t%v\n",
+				sv.Name,
+				sv.NodeType,
+				sv.IsRunning)
+		}
 	}
 
 	w.Flush()
@@ -277,57 +388,81 @@ func nodeInfoSliceF(format string, v []rh.NodeInfo) error {
 }
 
 func policyInfoF(format string, v *rh.Policy) error {
-
-	if format == "json" {
-		return jsonFormat(v)
-	}
-
 	w := tabwriter.NewWriter(
 		os.Stdout, 0, 0, padding, ' ', tabwriter.StripEscape)
 
-	fmt.Fprintf(w, "|%v\t|%v\t|%v\t|%v\t|%v\t|%v\n",
-		"Name",
-		"Vhost",
-		"Pattern",
-		"Priority",
-		"ApplyTo",
-		"Definition")
-	fmt.Fprintf(w, "|%v\t|%v\t|%v\t|%v\t|%v\t|%v\n",
-		v.Name,
-		v.Vhost,
-		v.Pattern,
-		v.Priority,
-		v.ApplyTo,
-		v.Definition)
+	switch format {
+	case "json":
+		return jsonFormat(v, false)
+	case "rawjson":
+		return jsonFormat(v, true)
+	case "plain":
+		fmt.Fprintf(w, "|%v\t|%v\t|%v\t|%v\t|%v\t|%v\n",
+			"Name",
+			"Vhost",
+			"Pattern",
+			"Priority",
+			"ApplyTo",
+			"Definition")
+
+		fmt.Fprintf(w, "|%v\t|%v\t|%v\t|%v\t|%v\t|%v\n",
+			v.Name,
+			v.Vhost,
+			v.Pattern,
+			v.Priority,
+			v.ApplyTo,
+			v.Definition)
+	default:
+		fmt.Fprintf(w, "%v\t%v\t%v\t%v\t%v\t%v\n",
+			v.Name,
+			v.Vhost,
+			v.Pattern,
+			v.Priority,
+			v.ApplyTo,
+			v.Definition)
+	}
 
 	w.Flush()
 	return nil
 }
 
 func policyInfoSliceF(format string, v []rh.Policy) error {
-
-	if format == "json" {
-		return jsonFormat(v)
-	}
-
 	w := tabwriter.NewWriter(
 		os.Stdout, 0, 0, padding, ' ', tabwriter.StripEscape)
-	fmt.Fprintf(w, "|%v\t|%v\t|%v\t|%v\t|%v\t|%v\n",
-		"Name",
-		"Vhost",
-		"Pattern",
-		"Priority",
-		"ApplyTo",
-		"Definition")
 
-	for _, sv := range v {
+	switch format {
+	case "json":
+		return jsonFormat(v, false)
+	case "rawjson":
+		return jsonFormat(v, true)
+	case "plain":
 		fmt.Fprintf(w, "|%v\t|%v\t|%v\t|%v\t|%v\t|%v\n",
-			sv.Name,
-			sv.Vhost,
-			sv.Pattern,
-			sv.Priority,
-			sv.ApplyTo,
-			sv.Definition)
+			"Name",
+			"Vhost",
+			"Pattern",
+			"Priority",
+			"ApplyTo",
+			"Definition")
+
+		for _, sv := range v {
+			fmt.Fprintf(w, "|%v\t|%v\t|%v\t|%v\t|%v\t|%v\n",
+				sv.Name,
+				sv.Vhost,
+				sv.Pattern,
+				sv.Priority,
+				sv.ApplyTo,
+				sv.Definition)
+		}
+	default:
+		for _, sv := range v {
+			fmt.Fprintf(w, "%v\t%v\t%v\t%v\t%v\t%v\n",
+				sv.Name,
+				sv.Vhost,
+				sv.Pattern,
+				sv.Priority,
+				sv.ApplyTo,
+				sv.Definition)
+		}
 	}
 
 	w.Flush()
@@ -335,42 +470,57 @@ func policyInfoSliceF(format string, v []rh.Policy) error {
 }
 
 func userInfoF(format string, v *rh.UserInfo) error {
-
-	if format == "json" {
-		return jsonFormat(v)
-	}
-
 	w := tabwriter.NewWriter(
 		os.Stdout, 0, 0, padding, ' ', tabwriter.StripEscape)
 
-	fmt.Fprintf(w, "|%v\t|%v\n",
-		"Name",
-		"Tag")
-	fmt.Fprintf(w, "|%v\t|%v\n",
-		v.Name,
-		v.Tags)
+	switch format {
+	case "json":
+		return jsonFormat(v, false)
+	case "rawjson":
+		return jsonFormat(v, true)
+	case "plain":
+		fmt.Fprintf(w, "|%v\t|%v\n",
+			"Name",
+			"Tag")
+
+		fmt.Fprintf(w, "|%v\t|%v\n",
+			v.Name,
+			v.Tags)
+	default:
+		fmt.Fprintf(w, "%v\t%v\n",
+			v.Name,
+			v.Tags)
+	}
 
 	w.Flush()
 	return nil
 }
 
 func userInfoSliceF(format string, v []rh.UserInfo) error {
-
-	if format == "json" {
-		return jsonFormat(v)
-	}
-
 	w := tabwriter.NewWriter(
 		os.Stdout, 0, 0, padding, ' ', tabwriter.StripEscape)
 
-	fmt.Fprintf(w, "|%v\t|%v\n",
-		"Name",
-		"Tag")
-
-	for _, sv := range v {
+	switch format {
+	case "json":
+		return jsonFormat(v, false)
+	case "rawjson":
+		return jsonFormat(v, true)
+	case "plain":
 		fmt.Fprintf(w, "|%v\t|%v\n",
-			sv.Name,
-			sv.Tags)
+			"Name",
+			"Tag")
+
+		for _, sv := range v {
+			fmt.Fprintf(w, "|%v\t|%v\n",
+				sv.Name,
+				sv.Tags)
+		}
+	default:
+		for _, sv := range v {
+			fmt.Fprintf(w, "%v\t%v\n",
+				sv.Name,
+				sv.Tags)
+		}
 	}
 
 	w.Flush()

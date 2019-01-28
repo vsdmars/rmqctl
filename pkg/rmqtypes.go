@@ -61,44 +61,44 @@ type (
 	listQueueType struct {
 		amqpConnectionType
 		QueueName string `validate:"-"`
-		Formatter string `validate:"oneof=json plain"`
+		Formatter string `validate:"oneof=json plain rawjson bash"`
 	}
 
 	listExchangeType struct {
 		amqpConnectionType
 		ExchangeName string `validate:"-"`
-		Formatter    string `validate:"oneof=json plain"`
+		Formatter    string `validate:"oneof=json plain rawjson bash"`
 	}
 
 	listBindType struct {
 		amqpConnectionType
 		All       bool   `validate:"-"`
-		Formatter string `validate:"oneof=json plain"`
+		Formatter string `validate:"oneof=json plain rawjson bash"`
 	}
 
 	listVhostType struct {
 		amqpConnectionType
 		VhostName string `validate:"-"`
-		Formatter string `validate:"oneof=json plain"`
+		Formatter string `validate:"oneof=json plain rawjson bash"`
 	}
 
 	listNodeType struct {
 		amqpConnectionType
 		NodeName  string `validate:"-"`
-		Formatter string `validate:"oneof=json plain"`
+		Formatter string `validate:"oneof=json plain rawjson bash"`
 	}
 
 	listPolicyType struct {
 		amqpConnectionType
 		PolicyName string `validate:"-"`
 		All        bool   `validate:"-"`
-		Formatter  string `validate:"oneof=json plain"`
+		Formatter  string `validate:"oneof=json plain rawjson bash"`
 	}
 
 	listUserType struct {
 		amqpConnectionType
 		RmqUsername string `validate:"-"`
-		Formatter   string `validate:"oneof=json plain"`
+		Formatter   string `validate:"oneof=json plain rawjson bash"`
 	}
 
 	deleteQueueType struct {

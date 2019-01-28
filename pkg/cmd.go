@@ -145,42 +145,42 @@ func flags(f int) []cli.Flag {
 	case listQueueAction:
 		return []cli.Flag{
 			cli.StringFlag{Name: "o", Value: "plain",
-				Usage: "output format, plain|json"},
+				Usage: "output format, plain|json|rawjson|bash"},
 		}
 	case listExchangeAction:
 		return []cli.Flag{
 			cli.StringFlag{Name: "o", Value: "plain",
-				Usage: "output format, plain|json"},
+				Usage: "output format, plain|json|rawjson|bash"},
 		}
 	case listNodeAction:
 		return []cli.Flag{
 
 			cli.StringFlag{Name: "o", Value: "plain",
-				Usage: "output format, plain|json"},
+				Usage: "output format, plain|json|rawjson|bash"},
 		}
 	case listVhostAction:
 		return []cli.Flag{
 			cli.StringFlag{Name: "o", Value: "plain",
-				Usage: "output format, plain|json"},
+				Usage: "output format, plain|json|rawjson|bash"},
 		}
 	case listBindAction:
 		return []cli.Flag{
 			cli.BoolFlag{Name: "all, a",
 				Usage: "list bindings from all vhosts"},
 			cli.StringFlag{Name: "o", Value: "plain",
-				Usage: "output format, plain|json"},
+				Usage: "output format, plain|json|rawjson|bash"},
 		}
 	case listPolicyAction:
 		return []cli.Flag{
 			cli.BoolFlag{Name: "all, a",
 				Usage: "list policies from all vhosts"},
 			cli.StringFlag{Name: "o", Value: "plain",
-				Usage: "output format, plain|json"},
+				Usage: "output format, plain|json|rawjson|bash"},
 		}
 	case listUserAction:
 		return []cli.Flag{
 			cli.StringFlag{Name: "o", Value: "plain",
-				Usage: "output format, plain|json"},
+				Usage: "output format, plain|json|rawjson|bash"},
 		}
 	case deleteBindAction:
 		return []cli.Flag{
