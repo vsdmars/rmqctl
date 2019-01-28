@@ -61,8 +61,6 @@ func validateCreateQueue(ctx *cli.Context, d *createQueueType) error {
 	d.amqpConnectionType = amqpData
 	d.Durable = ctx.Bool("du")
 	d.Autodelete = ctx.Bool("ad")
-	d.Exclusive = ctx.Bool("exc")
-	d.NoWait = ctx.Bool("nw")
 	d.QueueName = ctx.Args().First()
 
 	// HA variables
@@ -115,8 +113,6 @@ func validateCreateExchange(ctx *cli.Context, d *createExchangeType) error {
 	d.amqpConnectionType = amqpData
 	d.Durable = ctx.Bool("du")
 	d.Autodelete = ctx.Bool("ad")
-	d.Internal = ctx.Bool("exc")
-	d.NoWait = ctx.Bool("nw")
 	d.Kind = ctx.String("type")
 	d.ExchangeName = ctx.Args().First()
 
@@ -134,28 +130,9 @@ func validateCreateBind(ctx *cli.Context, d *createBindType) error {
 	}
 
 	d.amqpConnectionType = amqpData
-	d.NoWait = ctx.Bool("nw")
-	d.QueueName = ctx.Args().First()
-	d.ExchangeName = ctx.Args().Get(1)
-	d.Key = ctx.Args().Get(2)
-
-	if err := validates(d); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func validateCreateBindEx(ctx *cli.Context, d *createBindExType) error {
-	amqpData, err := validateAmqp(ctx)
-	if err != nil {
-		return nil
-	}
-
-	d.amqpConnectionType = amqpData
-	d.NoWait = ctx.Bool("nw")
-	d.FromExchange = ctx.Args().First()
-	d.ToExchange = ctx.Args().Get(1)
+	d.Type = ctx.String("type")
+	d.SourceExchangeName = ctx.Args().First()
+	d.DestinationName = ctx.Args().Get(1)
 	d.Key = ctx.Args().Get(2)
 
 	if err := validates(d); err != nil {
@@ -326,13 +303,7 @@ func validateDeleteQueue(ctx *cli.Context, d *deleteQueueType) error {
 	}
 
 	d.amqpConnectionType = amqpData
-	d.NoWait = ctx.Bool("nw")
 	d.QueueName = ctx.Args().First()
-
-	if !ctx.Bool("force") {
-		d.IfUnuse = true
-		d.IfEmpty = true
-	}
 
 	if err := validates(d); err != nil {
 		return err
@@ -348,12 +319,7 @@ func validateDeleteExchange(ctx *cli.Context, d *deleteExchangeType) error {
 	}
 
 	d.amqpConnectionType = amqpData
-	d.NoWait = ctx.Bool("nw")
 	d.ExchangeName = ctx.Args().First()
-
-	if !ctx.Bool("force") {
-		d.IfUnuse = true
-	}
 
 	if err := validates(d); err != nil {
 		return err
@@ -369,27 +335,9 @@ func validateDeleteBind(ctx *cli.Context, d *deleteBindType) error {
 	}
 
 	d.amqpConnectionType = amqpData
-	d.QueueName = ctx.Args().First()
-	d.ExchangeName = ctx.Args().Get(1)
-	d.Key = ctx.Args().Get(2)
-
-	if err := validates(d); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func validateDeleteBindEx(ctx *cli.Context, d *deleteBindExType) error {
-	amqpData, err := validateAmqp(ctx)
-	if err != nil {
-		return nil
-	}
-
-	d.amqpConnectionType = amqpData
-	d.NoWait = ctx.Bool("nw")
-	d.FromExchange = ctx.Args().First()
-	d.ToExchange = ctx.Args().Get(1)
+	d.Type = ctx.String("type")
+	d.SourceExchangeName = ctx.Args().First()
+	d.DestinationName = ctx.Args().Get(1)
 	d.Key = ctx.Args().Get(2)
 
 	if err := validates(d); err != nil {

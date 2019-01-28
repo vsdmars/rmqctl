@@ -19,7 +19,6 @@ const (
 	createQueueAction
 	createExchangeAction
 	createBindAction
-	createBindExAction
 	createPolicyAction
 	createUserAction
 	createVhostAction
@@ -33,7 +32,6 @@ const (
 	deleteQueueAction
 	deleteExchangeAction
 	deleteBindAction
-	deleteBindExAction
 	deletePolicyAction
 	deleteUserAction
 	deleteVhostAction
@@ -56,7 +54,6 @@ var (
 		createQueueAction:    createQueueJob,
 		createExchangeAction: createExchangeJob,
 		createBindAction:     createBindJob,
-		createBindExAction:   createBindExJob,
 		createUserAction:     createUserJob,
 		createVhostAction:    createVhostJob,
 		listQueueAction:      listQueueJob,
@@ -69,7 +66,6 @@ var (
 		deleteQueueAction:    deleteQueueJob,
 		deleteExchangeAction: deleteExchangeJob,
 		deleteBindAction:     deleteBindJob,
-		deleteBindExAction:   deleteBindExJob,
 		deletePolicyAction:   deletePolicyJob,
 		deleteUserAction:     deleteUserJob,
 		deleteVhostAction:    deleteVhostJob,
@@ -114,10 +110,6 @@ func flags(f int) []cli.Flag {
 				Usage: "queue survives after cluster restarts"},
 			cli.BoolFlag{Name: "autodelete, ad",
 				Usage: "queue will be deleted if no active consumers"},
-			cli.BoolFlag{Name: "exclusive, exc",
-				Usage: "queue is accessible only from this connection"},
-			cli.BoolFlag{Name: "nowait, nw",
-				Usage: "queue is assumed to be declared before"},
 			cli.BoolFlag{Name: "ha",
 				Usage: "HA enabled, creates policy name 'queuename_HA' under vhost -v (default: /)"},
 			cli.StringFlag{Name: "hamode, hm", Value: "all",
@@ -135,20 +127,11 @@ func flags(f int) []cli.Flag {
 				Usage: "survives after cluster restarts"},
 			cli.BoolFlag{Name: "autodelete, ad",
 				Usage: "exchange will be deleted if no active consumers"},
-			cli.BoolFlag{Name: "internal, itn",
-				Usage: "exchange does not accept publishings"},
-			cli.BoolFlag{Name: "nowait, nw",
-				Usage: "does not wait for confirmation from the server"},
 		}
 	case createBindAction:
 		return []cli.Flag{
-			cli.BoolFlag{Name: "nowait, nw",
-				Usage: "does not wait for confirmation from the server"},
-		}
-	case createBindExAction:
-		return []cli.Flag{
-			cli.BoolFlag{Name: "nowait, nw",
-				Usage: "does not wait for confirmation from the server"},
+			cli.StringFlag{Name: "type, t", Value: "queue",
+				Usage: "type, queue|exchange"},
 		}
 	case createUserAction:
 		return []cli.Flag{
@@ -199,24 +182,10 @@ func flags(f int) []cli.Flag {
 			cli.StringFlag{Name: "o", Value: "plain",
 				Usage: "output format, plain|json"},
 		}
-	case deleteQueueAction:
+	case deleteBindAction:
 		return []cli.Flag{
-			cli.BoolFlag{Name: "force, f",
-				Usage: "delete queue even it has consumers or messages"},
-			cli.BoolFlag{Name: "nowait, nw",
-				Usage: "without waiting for cluster's response"},
-		}
-	case deleteExchangeAction:
-		return []cli.Flag{
-			cli.BoolFlag{Name: "force, f",
-				Usage: "delete exchange even it has queue binding to it"},
-			cli.BoolFlag{Name: "nowait, nw",
-				Usage: "without waiting for cluster's response"},
-		}
-	case deleteBindExAction:
-		return []cli.Flag{
-			cli.BoolFlag{Name: "nowait, nw",
-				Usage: "without waiting for cluster's response"},
+			cli.StringFlag{Name: "type, t", Value: "queue",
+				Usage: "type, queue|exchange"},
 		}
 	case publishAction:
 		return []cli.Flag{
@@ -283,21 +252,10 @@ func commands() []cli.Command {
 					After:  doneAfter,
 				},
 				{
-					Name:        "bindex",
-					Usage:       "rmqctl [global options] create bindex [bind-exchange options] FROM_EXCHANGE TO_EXCHANGE KEY",
-					UsageText:   "create resource bind-exchange",
-					Description: "create bindex",
-					Category:    "create",
-					Flags:       flags(createBindExAction),
-					// UseShortOptionHandling: true, //support in cli.v2
-					Action: actions(createBindExAction),
-					After:  doneAfter,
-				},
-				{
 					Name:        "bind",
-					Usage:       "rmqctl [global options] create bind [bind options] QUEUE_NAME EXCHANGE_NAME KEY",
-					UsageText:   "create resource bind queue exchange key",
-					Description: "create binding",
+					Usage:       "rmqctl [global options] create bind [bind options] SOURCE(Exchange Name) DESTINATION ROUTING_KEY",
+					UsageText:   "binds DESTINATION(queue or exchange, --type queue|exchange) to SOURCE(exchange)",
+					Description: "create binding for Queue or Exchange to source exchange",
 					Category:    "create",
 					Flags:       flags(createBindAction),
 					// UseShortOptionHandling: true, //support in cli.v2
@@ -418,7 +376,6 @@ func commands() []cli.Command {
 					UsageText:   "delete resource queue",
 					Description: "delete queue under vhost(default: /)",
 					Category:    "delete",
-					Flags:       flags(deleteQueueAction),
 					// UseShortOptionHandling: true, //support in cli.v2
 					Action: actions(deleteQueueAction),
 					After:  doneAfter,
@@ -429,30 +386,19 @@ func commands() []cli.Command {
 					UsageText:   "delete resource exchange",
 					Description: "delete exchange under vhost(default: /)",
 					Category:    "delete",
-					Flags:       flags(deleteExchangeAction),
 					// UseShortOptionHandling: true, //support in cli.v2
 					Action: actions(deleteExchangeAction),
 					After:  doneAfter,
 				},
 				{
 					Name:        "bind",
-					Usage:       "rmqctl [global options] delete bind [bind options] QUEUE_NAME EXCHANGE_NAME KEY",
-					UsageText:   "delete resource bind",
-					Description: "delete binding",
+					Usage:       "rmqctl [global options] delete bind [bind options] SOURCE(Exchange Name) DESTINATION ROUTING_KEY",
+					UsageText:   "delete bind DESTINATION(queue or exchange, --type queue|exchange) to SOURCE(exchange)",
+					Description: "delete binding from Queue or Exchange to source exchange",
 					Category:    "delete",
+					Flags:       flags(deleteBindAction),
 					// UseShortOptionHandling: true, //support in cli.v2
 					Action: actions(deleteBindAction),
-					After:  doneAfter,
-				},
-				{
-					Name:        "bindex",
-					Usage:       "rmqctl [global options] delete bindex [bindex options] FROM_EXCHANGE TO_EXCHANGE KEY",
-					UsageText:   "delete resource exchange bind",
-					Description: "delete exchange binding",
-					Category:    "delete",
-					Flags:       flags(deleteBindExAction),
-					// UseShortOptionHandling: true, //support in cli.v2
-					Action: actions(deleteBindExAction),
 					After:  doneAfter,
 				},
 				{

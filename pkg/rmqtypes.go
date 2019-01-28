@@ -1,6 +1,9 @@
 package pkg
 
-import "github.com/streadway/amqp"
+import (
+	"github.com/streadway/amqp"
+	cli "gopkg.in/urfave/cli.v1"
+)
 
 type (
 	amqpConnectionType struct {
@@ -17,8 +20,6 @@ type (
 		QueueName  string     `validate:"required"`
 		Durable    bool       `validate:"-"`
 		Autodelete bool       `validate:"-"`
-		Exclusive  bool       `validate:"-"`
-		NoWait     bool       `validate:"-"`
 		Ha         bool       `validate:"-"`
 		HaMode     string     `validate:"oneof=all exactly nodes"`
 		HaParam    string     `validate:"-"`
@@ -32,27 +33,16 @@ type (
 		Kind         string     `validate:"oneof=direct fanout topic headers"`
 		Durable      bool       `validate:"-"`
 		Autodelete   bool       `validate:"-"`
-		Internal     bool       `validate:"-"`
-		NoWait       bool       `validate:"-"`
 		Args         amqp.Table `validate:"-"`
 	}
 
 	createBindType struct {
 		amqpConnectionType
-		QueueName    string     `validate:"required"`
-		ExchangeName string     `validate:"required"`
-		Key          string     `validate:"required"`
-		NoWait       bool       `validate:"-"`
-		Args         amqp.Table `validate:"-"`
-	}
-
-	createBindExType struct {
-		amqpConnectionType
-		FromExchange string     `validate:"required"`
-		ToExchange   string     `validate:"required"`
-		Key          string     `validate:"required"`
-		NoWait       bool       `validate:"-"`
-		Args         amqp.Table `validate:"-"`
+		SourceExchangeName string     `validate:"required"`
+		DestinationName    string     `validate:"required"`
+		Key                string     `validate:"required"`
+		Type               string     `validate:"oneof=queue exchange"`
+		Args               amqp.Table `validate:"-"`
 	}
 
 	createUserType struct {
@@ -114,33 +104,20 @@ type (
 	deleteQueueType struct {
 		amqpConnectionType
 		QueueName string `validate:"required"`
-		IfUnuse   bool   `validate:"-"`
-		IfEmpty   bool   `validate:"-"`
-		NoWait    bool   `validate:"-"`
 	}
 
 	deleteExchangeType struct {
 		amqpConnectionType
 		ExchangeName string `validate:"required"`
-		IfUnuse      bool   `validate:"-"`
-		NoWait       bool   `validate:"-"`
 	}
 
 	deleteBindType struct {
 		amqpConnectionType
-		QueueName    string     `validate:"required"`
-		ExchangeName string     `validate:"required"`
-		Key          string     `validate:"required"`
-		Args         amqp.Table `validate:"-"`
-	}
-
-	deleteBindExType struct {
-		amqpConnectionType
-		FromExchange string     `validate:"required"`
-		ToExchange   string     `validate:"required"`
-		Key          string     `validate:"required"`
-		NoWait       bool       `validate:"-"`
-		Args         amqp.Table `validate:"-"`
+		SourceExchangeName string     `validate:"required"`
+		DestinationName    string     `validate:"required"`
+		Key                string     `validate:"required"`
+		Type               string     `validate:"oneof=queue exchange"`
+		Args               amqp.Table `validate:"-"`
 	}
 
 	deletePolicyType struct {
@@ -191,3 +168,7 @@ type (
 		Tracing   bool   `validate:"-"`
 	}
 )
+
+func noSuchJob(ctx *cli.Context) error {
+	return cli.NewExitError("No such command!", 1)
+}
