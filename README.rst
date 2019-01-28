@@ -16,6 +16,7 @@ rmqctl_
 .. |release| image:: https://img.shields.io/badge/release-v1.0.0-blue.svg
   :target: https://github.com/vsdmars/rmqctl/tree/v1.0.0
 .. _binary release v1.0.0: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.0
+.. _binary release v1.0.3: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.3
 
 .. ;; And now we continue with the actual content
 
@@ -31,6 +32,10 @@ commands like kubectl.
 
 Binary Release:
 ---------------
+
+`binary release v1.0.3`_
+ - Publish/Consume use amqp protocol. Other actions using rabbitmq API call.
+ - bash/rawjson output format support.
 
 `binary release v1.0.0`_
 
@@ -68,8 +73,7 @@ Create
 ------
 - queue, queue in HA mode(with single command)
 - exchange
-- queue binding
-- exchange binding
+- queue/exchange binding
 - user
 - vhost
 
@@ -78,8 +82,7 @@ List
 ----
 - queue
 - exchange
-- queue binding
-- exchange binding
+- queue/exchange binding
 - user
 - vhost
 - node
@@ -90,8 +93,7 @@ Delete
 ------
 - queue
 - exchange
-- queue binding
-- exchange binding
+- queue/exchange binding
 - user
 - vhost
 - policy
@@ -250,9 +252,9 @@ Create queue binding
 
 ::
 
-  $ rmqctl create bind TEST_QUEUE_1 TEST_EXCHANGE_1 RUN
+  $ rmqctl create bind TEST_EXCHANGE_1 TEST_QUEUE_1 RUN
   done
-  $ rmqctl create bind TEST_QUEUE_2 TEST_EXCHANGE_1 RUN
+  $ rmqctl create bind TEST_EXCHANGE_1 TEST_QUEUE_2 RUN
   done
 
 
