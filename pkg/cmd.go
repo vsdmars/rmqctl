@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	configYaml = "rmqctl_config.yaml"
+	configYaml = ".rabbitmqadmin.conf]"
 )
 
 const (
@@ -88,20 +88,22 @@ func flags(f int) []cli.Flag {
 	switch f {
 	case generalAction:
 		return []cli.Flag{
-			altsrc.NewStringFlag(cli.StringFlag{Name: "username",
+			altsrc.NewStringFlag(cli.StringFlag{Name: "username, u",
 				Usage: "cluster username"}),
-			altsrc.NewStringFlag(cli.StringFlag{Name: "password",
+			altsrc.NewStringFlag(cli.StringFlag{Name: "password, p",
 				Usage: "cluster password"}),
-			altsrc.NewStringFlag(cli.StringFlag{Name: "host",
+			altsrc.NewStringFlag(cli.StringFlag{Name: "host, H",
 				Usage: "cluster host"}),
-			altsrc.NewStringFlag(cli.StringFlag{Name: "vhost", Value: "/",
+			altsrc.NewStringFlag(cli.StringFlag{Name: "vhost, V", Value: "/",
 				Usage: "cluster vhost"}),
-			altsrc.NewIntFlag(cli.IntFlag{Name: "port", Value: 5672,
+			altsrc.NewIntFlag(cli.IntFlag{Name: "port, P", Value: 5672,
 				Usage: "cluster port"}),
 			altsrc.NewIntFlag(cli.IntFlag{Name: "apiport", Value: 15672,
 				Usage: "cluster api port"}),
-			cli.StringFlag{Name: "load", Value: configDir,
-				Usage: "config file location"},
+			cli.StringFlag{Name: "config, c", Value: configDir,
+				Usage: "configuration file"},
+			cli.StringFlag{Name: "node, N", Value: "default",
+				Usage: "node described in the configuration file"},
 			cli.BoolFlag{Name: "debug, d", Usage: "run in debug mode"},
 		}
 	case createQueueAction:
