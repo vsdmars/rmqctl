@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	configYaml = ".rmqctl.conf"
+	configYaml = "rmqctl.conf"
 )
 
 const (
@@ -155,115 +155,193 @@ func flags(f int) []cli.Flag {
 		}
 	case createQueueAction:
 		return []cli.Flag{
-			cli.BoolFlag{Name: "durable,du",
-				Usage: "queue survives after cluster restarts"},
-			cli.BoolFlag{Name: "autodelete, ad",
-				Usage: "queue will be deleted if no active consumers"},
-			cli.BoolFlag{Name: "ha",
-				Usage: "HA enabled, creates policy name 'queuename_HA' under vhost -v (default: /)"},
-			cli.StringFlag{Name: "hamode, hm", Value: "all",
-				Usage: "HA mode, all|exactly|nodes"},
-			cli.StringFlag{Name: "haparam, hp",
-				Usage: "HA parameters"},
-			cli.StringFlag{Name: "syncmode, sm", Value: "automatic",
-				Usage: "HA SYNC mode, automatic|manual"},
+			cli.BoolFlag{
+				Name:  "durable,du",
+				Usage: "queue survives after cluster restarts",
+			},
+			cli.BoolFlag{
+				Name:  "autodelete, ad",
+				Usage: "queue will be deleted if no active consumers",
+			},
+			cli.BoolFlag{
+				Name:  "ha",
+				Usage: "HA enabled, creates policy name 'queuename_HA' under vhost -v (default: /)",
+			},
+			cli.StringFlag{
+				Name:  "hamode, hm",
+				Value: "all",
+				Usage: "HA mode, all|exactly|nodes",
+			},
+			cli.StringFlag{
+				Name:  "haparam, hp",
+				Usage: "HA parameters",
+			},
+			cli.StringFlag{
+				Name:  "syncmode, sm",
+				Value: "automatic",
+				Usage: "HA SYNC mode, automatic|manual",
+			},
 		}
 	case createExchangeAction:
 		return []cli.Flag{
-			cli.StringFlag{Name: "type, t", Value: "direct",
-				Usage: "kind, direct|fanout|topic|headers"},
-			cli.BoolFlag{Name: "durable,du",
-				Usage: "survives after cluster restarts"},
-			cli.BoolFlag{Name: "autodelete, ad",
-				Usage: "exchange will be deleted if no active consumers"},
+			cli.StringFlag{
+				Name:  "type, t",
+				Value: "direct",
+				Usage: "kind, direct|fanout|topic|headers",
+			},
+			cli.BoolFlag{
+				Name:  "durable,du",
+				Usage: "survives after cluster restarts",
+			},
+			cli.BoolFlag{
+				Name:  "autodelete, ad",
+				Usage: "exchange will be deleted if no active consumers",
+			},
 		}
 	case createBindAction:
 		return []cli.Flag{
-			cli.StringFlag{Name: "type, t", Value: "queue",
-				Usage: "type, queue|exchange"},
+			cli.StringFlag{
+				Name:  "type, t",
+				Value: "queue",
+				Usage: "type, queue|exchange",
+			},
 		}
 	case createUserAction:
 		return []cli.Flag{
-			cli.StringFlag{Name: "tag, t", Value: "",
-				Usage: "tag, none|management|policymaker|monitoring|administrator"},
+			cli.StringFlag{
+				Name:  "tag, t",
+				Value: "",
+				Usage: "tag, none|management|policymaker|monitoring|administrator",
+			},
 		}
 	case createVhostAction:
 		return []cli.Flag{
-			cli.BoolFlag{Name: "trace, t", Usage: "enable vhost tracing"},
+			cli.BoolFlag{
+				Name:  "trace, t",
+				Usage: "enable vhost tracing",
+			},
 		}
 	case listQueueAction:
 		return []cli.Flag{
-			cli.StringFlag{Name: "o", Value: "plain",
-				Usage: "output format, plain|json|rawjson|bash"},
+			cli.StringFlag{
+				Name:  "o",
+				Value: "plain",
+				Usage: "output format, plain|json|rawjson|bash",
+			},
 		}
 	case listExchangeAction:
 		return []cli.Flag{
-			cli.StringFlag{Name: "o", Value: "plain",
-				Usage: "output format, plain|json|rawjson|bash"},
+			cli.StringFlag{
+				Name:  "o",
+				Value: "plain",
+				Usage: "output format, plain|json|rawjson|bash",
+			},
 		}
 	case listNodeAction:
 		return []cli.Flag{
-
-			cli.StringFlag{Name: "o", Value: "plain",
-				Usage: "output format, plain|json|rawjson|bash"},
+			cli.StringFlag{
+				Name:  "o",
+				Value: "plain",
+				Usage: "output format, plain|json|rawjson|bash",
+			},
 		}
 	case listVhostAction:
 		return []cli.Flag{
-			cli.StringFlag{Name: "o", Value: "plain",
-				Usage: "output format, plain|json|rawjson|bash"},
+			cli.StringFlag{
+				Name:  "o",
+				Value: "plain",
+				Usage: "output format, plain|json|rawjson|bash",
+			},
 		}
 	case listBindAction:
 		return []cli.Flag{
-			cli.BoolFlag{Name: "all, a",
-				Usage: "list bindings from all vhosts"},
-			cli.StringFlag{Name: "o", Value: "plain",
-				Usage: "output format, plain|json|rawjson|bash"},
+			cli.BoolFlag{
+				Name:  "all, a",
+				Usage: "list bindings from all vhosts",
+			},
+			cli.StringFlag{
+				Name:  "o",
+				Value: "plain",
+				Usage: "output format, plain|json|rawjson|bash",
+			},
 		}
 	case listPolicyAction:
 		return []cli.Flag{
-			cli.BoolFlag{Name: "all, a",
-				Usage: "list policies from all vhosts"},
-			cli.StringFlag{Name: "o", Value: "plain",
-				Usage: "output format, plain|json|rawjson|bash"},
+			cli.BoolFlag{
+				Name:  "all, a",
+				Usage: "list policies from all vhosts",
+			},
+			cli.StringFlag{Name: "o",
+				Value: "plain",
+				Usage: "output format, plain|json|rawjson|bash",
+			},
 		}
 	case listUserAction:
 		return []cli.Flag{
-			cli.StringFlag{Name: "o", Value: "plain",
-				Usage: "output format, plain|json|rawjson|bash"},
+			cli.StringFlag{
+				Name:  "o",
+				Value: "plain",
+				Usage: "output format, plain|json|rawjson|bash",
+			},
 		}
 	case deleteBindAction:
 		return []cli.Flag{
-			cli.StringFlag{Name: "type, t", Value: "queue",
-				Usage: "type, queue|exchange"},
+			cli.StringFlag{
+				Name:  "type, t",
+				Value: "queue",
+				Usage: "type, queue|exchange",
+			},
 		}
 	case publishAction:
 		return []cli.Flag{
-			cli.BoolFlag{Name: "mandatory, m",
-				Usage: "if no queues bound to exchange, delivery fails"},
-			cli.BoolFlag{Name: "immediate, i",
-				Usage: "if no consumers on the matched queue, delivery fails"},
+			cli.BoolFlag{
+				Name:  "mandatory, m",
+				Usage: "if no queues bound to exchange, delivery fails",
+			},
+			cli.BoolFlag{
+				Name:  "immediate, i",
+				Usage: "if no consumers on the matched queue, delivery fails",
+			},
 		}
 	case consumeAction:
 		return []cli.Flag{
-			cli.BoolFlag{Name: "daemon, d",
-				Usage: "daemon mode"},
-			cli.StringFlag{Name: "acktype, t", Value: "ack",
-				Usage: "acknowledge type, ack|nack|reject"},
-			cli.BoolFlag{Name: "autoack, a",
-				Usage: "acknowledge by default once receives message"},
-			cli.BoolFlag{Name: "nowait, nw",
-				Usage: "begins without waiting cluster to confirm"},
-			cli.StringFlag{Name: "o", Value: "plain",
-				Usage: "output format, plain|json"},
+			cli.BoolFlag{
+				Name:  "daemon, d",
+				Usage: "daemon mode",
+			},
+			cli.StringFlag{
+				Name:  "acktype, t",
+				Value: "ack",
+				Usage: "acknowledge type, ack|nack|reject",
+			},
+			cli.BoolFlag{
+				Name:  "autoack, a",
+				Usage: "acknowledge by default once receives message",
+			},
+			cli.BoolFlag{
+				Name:  "nowait, nw",
+				Usage: "begins without waiting cluster to confirm",
+			},
+			cli.StringFlag{
+				Name:  "o",
+				Value: "plain",
+				Usage: "output format, plain|json",
+			},
 		}
 	case updateUserAction:
 		return []cli.Flag{
-			cli.StringFlag{Name: "tag, t", Value: "",
-				Usage: "tag, none|management|policymaker|monitoring|administrator"},
+			cli.StringFlag{
+				Name:  "tag, t",
+				Value: "",
+				Usage: "tag, none|management|policymaker|monitoring|administrator",
+			},
 		}
 	case updateVhostAction:
 		return []cli.Flag{
-			cli.BoolFlag{Name: "trace, t", Usage: "enable vhost tracing"},
+			cli.BoolFlag{
+				Name:  "trace, t",
+				Usage: "enable vhost tracing",
+			},
 		}
 	default:
 		return nil
@@ -540,16 +618,27 @@ func commands() []cli.Command {
 func Cmd() error {
 	defer logCleanUp()
 
-	regSignalHandler(func() {
-		os.Exit(128 + int(syscall.SIGQUIT))
-	}, syscall.SIGQUIT)
+	regSignalHandler(
+		func() {
+			os.Exit(128 + int(syscall.SIGQUIT))
+		},
+		syscall.SIGQUIT,
+	)
 
-	regSignalHandler(func() {
-		os.Exit(128 + int(syscall.SIGTERM))
-	}, syscall.SIGTERM)
+	regSignalHandler(
+		func() {
+			os.Exit(128 + int(syscall.SIGTERM))
+		},
+		syscall.SIGTERM,
+	)
 
 	cliapp := cli.NewApp()
-	cliapp.Authors = []cli.Author{{Name: "verbalsaint", Email: "vsdmars@gmail.com"}}
+	cliapp.Authors = []cli.Author{
+		{
+			Name:  "shuo-huan chang/verbalsaint",
+			Email: "vsdmars@gmail.com",
+		},
+	}
 	cliapp.Copyright = "LICENSE information on https://github.com/vsdmars/rmqctl"
 
 	cliapp.Name = "rmqctl"
@@ -565,7 +654,9 @@ func Cmd() error {
 	cliapp.Commands = commands
 
 	if err := cliapp.Run(os.Args); err != nil {
-		logger.Debug("rmqctl encountered error",
+		logger.Debug("encountered error",
+			zap.String("application", "rmqctl"),
+			zap.String("version", cliapp.Version),
 			zap.String("error", err.Error()))
 		return err
 	}

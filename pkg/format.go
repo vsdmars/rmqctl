@@ -23,14 +23,18 @@ func jsonFormat(v interface{}, raw bool) error {
 	if raw {
 		output, err = json.Marshal(v)
 		if err != nil {
-			logger.Debug("format output failed")
+			logger.Debug(
+				"format output failed",
+			)
 
 			return cli.NewExitError(err.Error(), 1)
 		}
 	} else {
 		output, err = json.MarshalIndent(v, "", "  ")
 		if err != nil {
-			logger.Debug("format output failed")
+			logger.Debug(
+				"format output failed",
+			)
 
 			return cli.NewExitError(err.Error(), 1)
 		}

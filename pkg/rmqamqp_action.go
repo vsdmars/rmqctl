@@ -18,22 +18,36 @@ func connect(amqpconn *amqpConnectionType) (*amqp.Connection, error) {
 		Vhost:    amqpconn.Vhost,
 	}
 
-	logger.Debug("amqp connect URL", zap.String("amqp", amqpURL.String()))
+	logger.Debug(
+		"amqp URL",
+		zap.String("service", "amqp"),
+		zap.String("URL", amqpURL.String()),
+	)
 
 	amqpURL.Password = amqpconn.Password
 
+	logger.Debug(
+		"timeout",
+		zap.String("service", "amqp"),
+		zap.String("timeout", (3*time.Second).String()),
+	)
+
 	// tcp connection timeout in 3 seconds.
-	connection, err := amqp.DialConfig(amqpURL.String(),
+	connection, err := amqp.DialConfig(
+		amqpURL.String(),
 		amqp.Config{
 			Vhost: amqpconn.Vhost,
 			Dial: func(network, addr string) (net.Conn, error) {
 				return net.DialTimeout(network, addr, 3*time.Second)
 			},
 			Heartbeat: 10 * time.Second,
-			Locale:    "en_US"})
+			Locale:    "en_US"},
+	)
 	if err != nil {
-		logger.Debug("Opening amqp connection failed.",
-			zap.String("error", err.Error()))
+		logger.Debug(
+			"amqp create connection failed",
+			zap.String("service", "amqp"),
+		)
 
 		return nil, cli.NewExitError(err.Error(), 1)
 	}
@@ -44,8 +58,10 @@ func connect(amqpconn *amqpConnectionType) (*amqp.Connection, error) {
 func publishMsg(conn *amqp.Connection, data *publishType) error {
 	channel, err := conn.Channel()
 	if err != nil {
-		logger.Debug("Opening channel failed.",
-			zap.String("error", err.Error()))
+		logger.Debug(
+			"amqp create channel failed",
+			zap.String("service", "amqp"),
+		)
 
 		return cli.NewExitError(err.Error(), 1)
 	}
@@ -57,8 +73,10 @@ func publishMsg(conn *amqp.Connection, data *publishType) error {
 		data.Immediate,
 		data.Message,
 	); err != nil {
-		logger.Debug("Publish failed, channel closed.",
-			zap.String("error", err.Error()))
+		logger.Debug(
+			"publish failed",
+			zap.String("service", "amqp"),
+		)
 
 		return cli.NewExitError(err.Error(), 1)
 	}
@@ -72,8 +90,10 @@ func publishMsg(conn *amqp.Connection, data *publishType) error {
 func consumeMsg(conn *amqp.Connection, data *consumeType) error {
 	channel, err := conn.Channel()
 	if err != nil {
-		logger.Debug("Opening channel failed.",
-			zap.String("error", err.Error()))
+		logger.Debug(
+			"amqp create channel failed",
+			zap.String("service", "amqp"),
+		)
 
 		return cli.NewExitError(err.Error(), 1)
 	}

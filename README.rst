@@ -4,7 +4,7 @@ rmqctl_
 .. All external links are here
 .. _rmqctl: https://github.com/vsdmars/rmqctl
 .. _rabbitmqadmin: https://www.rabbitmq.com/management-cli.html
-.. _rmqctl_config.yaml: ./rmqctl_config.yaml
+.. _rmqctl.conf: ./rmqctl.conf
 .. |travis| image:: https://api.travis-ci.org/vsdmars/rmqctl.svg?branch=v1
   :target: https://travis-ci.org/vsdmars/rmqctl
 .. |go report| image:: https://goreportcard.com/badge/github.com/vsdmars/rmqctl
@@ -40,10 +40,10 @@ Binary Release:
 `binary release v1.0.0`_
 
 
-rmqctl_config.yaml_
+rmqctl.conf_
 -------------------
 
-rmqctl_config.yaml contains connection information to
+rmqctl.conf (yaml format) contains connection information to
 rabbitmq cluster.
 
 .. code:: yaml
@@ -56,13 +56,14 @@ rabbitmq cluster.
    vhost: "/"
 
 
-rmqctl by default loads *rmqctl_config.yaml* under the working directory.
+rmqctl by default loads *rmqctl.conf* under the working directory.
 
-rmqctl loads *rmqctl_config.yaml* from other location by using --load :
+We can tell rmqctl where to load the *rmqctl.conf* by using '-c' flag :
+
 
 ::
 
- rmqctl --load path_to_rmqctl_config.yaml COMMANDS
+ rmqctl -c path_to_rmqctl.conf COMMANDS
 
 
 =========

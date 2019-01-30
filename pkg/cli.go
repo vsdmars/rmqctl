@@ -19,8 +19,10 @@ func mainBefore(flags []cli.Flag) cli.BeforeFunc {
 		// directory
 		if _, err := os.Stat(configDir); err == nil {
 			// load config file
-			return altsrc.InitInputSourceWithContext(flags,
-				altsrc.NewYamlSourceFromFlagFunc("config"))(ctx)
+			return altsrc.InitInputSourceWithContext(
+				flags,
+				altsrc.NewYamlSourceFromFlagFunc("config"),
+			)(ctx)
 		}
 		return nil
 	}

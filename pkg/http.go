@@ -11,7 +11,7 @@ import (
 func handleHTTPResponse(res *http.Response, action string, obj string) error {
 
 	logger.Debug(
-		"HTTP response",
+		"HTTP",
 		zap.String("response", fmt.Sprintf("%v", res)),
 	)
 

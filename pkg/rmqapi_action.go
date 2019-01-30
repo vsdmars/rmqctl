@@ -21,7 +21,8 @@ func connectAPI(amqpconn *amqpConnectionType) (*rh.Client, error) {
 	}
 
 	logger.Debug(
-		"api connecti URL",
+		"api URL",
+		zap.String("service", "api"),
 		zap.String("api", apiURL.String()),
 	)
 
@@ -31,14 +32,22 @@ func connectAPI(amqpconn *amqpConnectionType) (*rh.Client, error) {
 		amqpconn.Password,
 	)
 	if err != nil {
-		logger.Debug("Opening API Connection failed.",
-			zap.String("error", err.Error()))
+		logger.Debug(
+			"api create connection failed.",
+			zap.String("service", "api"),
+		)
 
 		return nil, cli.NewExitError(err.Error(), 1)
 	}
 
 	// http client connection timeout in 3 seconds
 	conn.SetTimeout(3 * time.Second)
+
+	logger.Debug(
+		"timeout",
+		zap.String("service", "api"),
+		zap.String("timeout", (3*time.Second).String()),
+	)
 
 	return conn, nil
 }
@@ -62,9 +71,9 @@ func createQueue(conn *rh.Client, data *createQueueType) error {
 	if err != nil {
 		logger.Debug(
 			"create queue failed",
+			zap.String("service", "api"),
 			zap.String("queue", data.QueueName),
 			zap.String("vhost", data.Vhost),
-			zap.String("error", err.Error()),
 		)
 
 		return cli.NewExitError(err.Error(), 1)
@@ -113,13 +122,13 @@ func createQueueHA(conn *rh.Client, data *createQueueType) error {
 	if err != nil {
 		logger.Debug(
 			"set queue HA policy failed",
+			zap.String("service", "api"),
 			zap.String("queue", data.QueueName),
 			zap.String("vhost", data.Vhost),
 			zap.String("HA mode", data.HaMode),
 			zap.String("HA param", data.HaParam),
 			zap.String("HA sync mode", data.HaSyncMode),
 			zap.String("http response", fmt.Sprintf("%v", res)),
-			zap.String("error", err.Error()),
 		)
 
 		return cli.NewExitError(err.Error(), 1)
@@ -148,9 +157,9 @@ func createExchange(conn *rh.Client, data *createExchangeType) error {
 	if err != nil {
 		logger.Debug(
 			"create exchange failed",
+			zap.String("service", "api"),
 			zap.String("exchange", data.ExchangeName),
 			zap.String("vhost", data.Vhost),
-			zap.String("error", err.Error()),
 		)
 
 		return cli.NewExitError(err.Error(), 1)
@@ -180,12 +189,12 @@ func createBind(conn *rh.Client, data *createBindType) error {
 	if err != nil {
 		logger.Debug(
 			"create bind failed",
+			zap.String("service", "api"),
 			zap.String("source", data.SourceExchangeName),
 			zap.String("destination", data.DestinationName),
 			zap.String("routing key", data.Key),
 			zap.String("type", data.Type),
 			zap.String("vhost", data.Vhost),
-			zap.String("error", err.Error()),
 		)
 
 		return cli.NewExitError(err.Error(), 1)
@@ -199,7 +208,8 @@ func createUser(conn *rh.Client, data *createUserType) error {
 	userInfo, err := conn.GetUser(data.RmqUsername)
 	if err == nil {
 		logger.Debug(
-			"user exists",
+			"user already exists",
+			zap.String("service", "api"),
 			zap.String("user", userInfo.Name),
 			zap.String("tag", userInfo.Tags),
 		)
@@ -221,9 +231,9 @@ func createUser(conn *rh.Client, data *createUserType) error {
 	if err != nil {
 		logger.Debug(
 			"create user failed",
+			zap.String("service", "api"),
 			zap.String("user", data.RmqUsername),
 			zap.String("tag", data.Tag),
-			zap.String("error", err.Error()),
 		)
 
 		return cli.NewExitError(err.Error(), 1)
@@ -237,7 +247,8 @@ func createVhost(conn *rh.Client, data *createVhostType) error {
 	vhostInfo, err := conn.GetVhost(data.VhostName)
 	if err == nil {
 		logger.Debug(
-			"vhost exists",
+			"vhost already exists",
+			zap.String("service", "api"),
 			zap.String("vhost", vhostInfo.Name),
 			zap.Bool("tracing", vhostInfo.Tracing),
 		)
@@ -257,9 +268,9 @@ func createVhost(conn *rh.Client, data *createVhostType) error {
 	if err != nil {
 		logger.Debug(
 			"create vhost failed",
+			zap.String("service", "api"),
 			zap.String("vhost", data.VhostName),
 			zap.Bool("tracing", data.Tracing),
-			zap.String("error", err.Error()),
 		)
 
 		return cli.NewExitError(err.Error(), 1)
@@ -274,6 +285,7 @@ func listQueue(conn *rh.Client, data *listQueueType) error {
 		if err != nil {
 			logger.Debug(
 				"no such queue",
+				zap.String("service", "api"),
 				zap.String("vhost", data.Vhost),
 				zap.String("queue", data.QueueName),
 			)
@@ -288,7 +300,7 @@ func listQueue(conn *rh.Client, data *listQueueType) error {
 	if err != nil {
 		logger.Debug(
 			"list queues failed",
-			zap.String("error", err.Error()),
+			zap.String("service", "api"),
 		)
 
 		return cli.NewExitError(err.Error(), 1)
@@ -303,6 +315,7 @@ func listExchange(conn *rh.Client, data *listExchangeType) error {
 		if err != nil {
 			logger.Debug(
 				"no such exchange",
+				zap.String("service", "api"),
 				zap.String("vhost", data.Vhost),
 				zap.String("exchange", data.ExchangeName),
 			)
@@ -317,7 +330,7 @@ func listExchange(conn *rh.Client, data *listExchangeType) error {
 	if err != nil {
 		logger.Debug(
 			"list exchange failed",
-			zap.String("error", err.Error()),
+			zap.String("service", "api"),
 		)
 
 		return cli.NewExitError(err.Error(), 1)
@@ -333,7 +346,10 @@ func listBind(conn *rh.Client, data *listBindType) error {
 	if data.All {
 		binfos, err = conn.ListBindings()
 		if err != nil {
-			logger.Debug("list bindings from all vhosts failed")
+			logger.Debug(
+				"list bindings from all vhosts failed",
+				zap.String("service", "api"),
+			)
 
 			return cli.NewExitError(err.Error(), 1)
 		}
@@ -343,8 +359,8 @@ func listBind(conn *rh.Client, data *listBindType) error {
 		if err != nil {
 			logger.Debug(
 				"list bindings from vhost failed",
+				zap.String("service", "api"),
 				zap.String("vhost", data.Vhost),
-				zap.String("error", err.Error()),
 			)
 
 			return cli.NewExitError(err.Error(), 1)
@@ -360,6 +376,7 @@ func listVhost(conn *rh.Client, data *listVhostType) error {
 		if err != nil {
 			logger.Debug(
 				"no such vhost",
+				zap.String("service", "api"),
 				zap.String("vhost", data.VhostName),
 			)
 
@@ -371,7 +388,10 @@ func listVhost(conn *rh.Client, data *listVhostType) error {
 
 	vhostInfos, err := conn.ListVhosts()
 	if err != nil {
-		logger.Debug("list vhosts failed")
+		logger.Debug(
+			"list vhosts failed",
+			zap.String("service", "api"),
+		)
 
 		return cli.NewExitError(err.Error(), 1)
 	}
@@ -385,6 +405,7 @@ func listNode(conn *rh.Client, data *listNodeType) error {
 		if err != nil {
 			logger.Debug(
 				"no such node",
+				zap.String("service", "api"),
 				zap.String("node", data.NodeName),
 			)
 
@@ -396,7 +417,10 @@ func listNode(conn *rh.Client, data *listNodeType) error {
 
 	nodeInfos, err := conn.ListNodes()
 	if err != nil {
-		logger.Debug("list nodes failed")
+		logger.Debug(
+			"list nodes failed",
+			zap.String("service", "api"),
+		)
 
 		return cli.NewExitError(err.Error(), 1)
 	}
@@ -410,6 +434,7 @@ func listPolicy(conn *rh.Client, data *listPolicyType) error {
 		if err != nil {
 			logger.Debug(
 				"no such policy",
+				zap.String("service", "api"),
 				zap.String("policy", data.PolicyName),
 			)
 
@@ -424,7 +449,7 @@ func listPolicy(conn *rh.Client, data *listPolicyType) error {
 		if err != nil {
 			logger.Debug(
 				"list all vhosts' policy failed",
-				zap.String("err", err.Error()),
+				zap.String("service", "api"),
 			)
 
 			return cli.NewExitError(err.Error(), 1)
@@ -437,8 +462,8 @@ func listPolicy(conn *rh.Client, data *listPolicyType) error {
 	if err != nil {
 		logger.Debug(
 			"list vhost's policy failed",
+			zap.String("service", "api"),
 			zap.String("vhost", data.Vhost),
-			zap.String("err", err.Error()),
 		)
 
 		return cli.NewExitError(err.Error(), 1)
@@ -453,6 +478,7 @@ func listUser(conn *rh.Client, data *listUserType) error {
 		if err != nil {
 			logger.Debug(
 				"no such user",
+				zap.String("service", "api"),
 				zap.String("user", data.RmqUsername),
 			)
 
@@ -466,7 +492,7 @@ func listUser(conn *rh.Client, data *listUserType) error {
 	if err != nil {
 		logger.Debug(
 			"list users failed",
-			zap.String("err", err.Error()),
+			zap.String("service", "api"),
 		)
 
 		return cli.NewExitError(err.Error(), 1)
@@ -488,9 +514,9 @@ func deleteQueue(conn *rh.Client, data *deleteQueueType) error {
 	if err != nil {
 		logger.Debug(
 			"delete queue failed",
+			zap.String("service", "api"),
 			zap.String("queue", data.QueueName),
 			zap.String("vhost", data.Vhost),
-			zap.String("error", err.Error()),
 		)
 
 		return cli.NewExitError(err.Error(), 1)
@@ -512,9 +538,9 @@ func deleteExchange(conn *rh.Client, data *deleteExchangeType) error {
 	if err != nil {
 		logger.Debug(
 			"delete exchange failed",
+			zap.String("service", "api"),
 			zap.String("exchange", data.ExchangeName),
 			zap.String("vhost", data.Vhost),
-			zap.String("error", err.Error()),
 		)
 
 		return cli.NewExitError(err.Error(), 1)
@@ -544,12 +570,12 @@ func deleteBind(conn *rh.Client, data *deleteBindType) error {
 	if err != nil {
 		logger.Debug(
 			"delete bind failed",
+			zap.String("service", "api"),
 			zap.String("source", data.SourceExchangeName),
 			zap.String("destination", data.DestinationName),
 			zap.String("routing key", data.Key),
 			zap.String("type", data.Type),
 			zap.String("vhost", data.Vhost),
-			zap.String("error", err.Error()),
 		)
 
 		return cli.NewExitError(err.Error(), 1)
@@ -563,9 +589,9 @@ func deletePolicy(conn *rh.Client, data *deletePolicyType) error {
 	if err != nil {
 		logger.Debug(
 			"delete policy failed",
+			zap.String("service", "api"),
 			zap.String("policy", data.PolicyName),
 			zap.String("http response", fmt.Sprintf("%v", res)),
-			zap.String("error", err.Error()),
 		)
 
 		return cli.NewExitError(err.Error(), 1)
@@ -584,8 +610,8 @@ func deleteUser(conn *rh.Client, data *deleteUserType) error {
 	if err != nil {
 		logger.Debug(
 			"delete user failed",
+			zap.String("service", "api"),
 			zap.String("user", data.RmqUsername),
-			zap.String("error", err.Error()),
 		)
 
 		return cli.NewExitError(err.Error(), 1)
@@ -604,8 +630,8 @@ func deleteVhost(conn *rh.Client, data *deleteVhostType) error {
 	if err != nil {
 		logger.Debug(
 			"delete vhost failed",
+			zap.String("service", "api"),
 			zap.String("vhost", data.VhostName),
-			zap.String("error", err.Error()),
 		)
 
 		return cli.NewExitError(err.Error(), 1)
@@ -620,8 +646,8 @@ func updateUser(conn *rh.Client, data *updateUserType) error {
 	if err != nil {
 		logger.Debug(
 			"user doesn't exist",
+			zap.String("service", "api"),
 			zap.String("user", data.RmqUsername),
-			zap.String("error", err.Error()),
 		)
 
 		return cli.NewExitError(err.Error(), 1)
@@ -641,9 +667,9 @@ func updateUser(conn *rh.Client, data *updateUserType) error {
 	if err != nil {
 		logger.Debug(
 			"update user failed",
+			zap.String("service", "api"),
 			zap.String("user", data.RmqUsername),
 			zap.String("tag", data.Tag),
-			zap.String("error", err.Error()),
 		)
 
 		return cli.NewExitError(err.Error(), 1)
@@ -658,8 +684,8 @@ func updateVhost(conn *rh.Client, data *updateVhostType) error {
 	if err != nil {
 		logger.Debug(
 			"vhost doesn't exist",
+			zap.String("service", "api"),
 			zap.String("vhost", data.VhostName),
-			zap.String("error", err.Error()),
 		)
 
 		return cli.NewExitError(err.Error(), 1)
@@ -677,9 +703,9 @@ func updateVhost(conn *rh.Client, data *updateVhostType) error {
 	if err != nil {
 		logger.Debug(
 			"create vhost failed",
+			zap.String("service", "api"),
 			zap.String("vhost", data.VhostName),
 			zap.Bool("tracing", data.Tracing),
-			zap.String("error", err.Error()),
 		)
 
 		return cli.NewExitError(err.Error(), 1)
