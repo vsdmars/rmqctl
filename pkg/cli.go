@@ -20,7 +20,7 @@ func mainBefore(flags []cli.Flag) cli.BeforeFunc {
 		if _, err := os.Stat(configDir); err == nil {
 			// load config file
 			return altsrc.InitInputSourceWithContext(flags,
-				altsrc.NewYamlSourceFromFlagFunc("load"))(ctx)
+				altsrc.NewYamlSourceFromFlagFunc("config"))(ctx)
 		}
 		return nil
 	}

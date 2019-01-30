@@ -36,13 +36,39 @@ func validates(d interface{}) error {
 }
 
 func validateAmqp(ctx *cli.Context) (amqpConnectionType, error) {
+	var username string
+	var password string
+	var host string
+	var vhost string
+	var port int
+	var aport int
+
+	if username = ctx.GlobalString("u"); len(username) == 0 {
+		username = ctx.GlobalString("username")
+	}
+	if password = ctx.GlobalString("p"); len(password) == 0 {
+		password = ctx.GlobalString("password")
+	}
+	if host = ctx.GlobalString("H"); len(host) == 0 {
+		host = ctx.GlobalString("host")
+	}
+	if vhost = ctx.GlobalString("V"); len(vhost) == 0 {
+		vhost = ctx.GlobalString("vhost")
+	}
+	if port = ctx.GlobalInt("P"); port == 0 {
+		port = ctx.GlobalInt("port")
+	}
+	if aport = ctx.GlobalInt("AP"); aport == 0 {
+		aport = ctx.GlobalInt("apiport")
+	}
+
 	amqpData := amqpConnectionType{
-		Username: ctx.GlobalString("username"),
-		Password: ctx.GlobalString("password"),
-		Host:     ctx.GlobalString("host"),
-		Vhost:    ctx.GlobalString("vhost"),
-		Port:     ctx.GlobalInt("port"),
-		APIPort:  ctx.GlobalInt("apiport"),
+		Username: username,
+		Password: password,
+		Host:     host,
+		Vhost:    vhost,
+		Port:     port,
+		APIPort:  aport,
 	}
 
 	if err := validates(amqpData); err != nil {
@@ -55,7 +81,7 @@ func validateAmqp(ctx *cli.Context) (amqpConnectionType, error) {
 func validateCreateQueue(ctx *cli.Context, d *createQueueType) error {
 	amqpData, err := validateAmqp(ctx)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	d.amqpConnectionType = amqpData
@@ -103,7 +129,7 @@ func validateCreateQueue(ctx *cli.Context, d *createQueueType) error {
 func validateCreateExchange(ctx *cli.Context, d *createExchangeType) error {
 	amqpData, err := validateAmqp(ctx)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	d.amqpConnectionType = amqpData
@@ -118,7 +144,7 @@ func validateCreateExchange(ctx *cli.Context, d *createExchangeType) error {
 func validateCreateBind(ctx *cli.Context, d *createBindType) error {
 	amqpData, err := validateAmqp(ctx)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	d.amqpConnectionType = amqpData
@@ -133,7 +159,7 @@ func validateCreateBind(ctx *cli.Context, d *createBindType) error {
 func validateCreateUser(ctx *cli.Context, d *createUserType) error {
 	amqpData, err := validateAmqp(ctx)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	d.amqpConnectionType = amqpData
@@ -147,7 +173,7 @@ func validateCreateUser(ctx *cli.Context, d *createUserType) error {
 func validateCreateVhost(ctx *cli.Context, d *createVhostType) error {
 	amqpData, err := validateAmqp(ctx)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	d.amqpConnectionType = amqpData
@@ -160,7 +186,7 @@ func validateCreateVhost(ctx *cli.Context, d *createVhostType) error {
 func validateListQueue(ctx *cli.Context, d *listQueueType) error {
 	amqpData, err := validateAmqp(ctx)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	d.amqpConnectionType = amqpData
@@ -173,7 +199,7 @@ func validateListQueue(ctx *cli.Context, d *listQueueType) error {
 func validateListExchange(ctx *cli.Context, d *listExchangeType) error {
 	amqpData, err := validateAmqp(ctx)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	d.amqpConnectionType = amqpData
@@ -186,7 +212,7 @@ func validateListExchange(ctx *cli.Context, d *listExchangeType) error {
 func validateListBind(ctx *cli.Context, d *listBindType) error {
 	amqpData, err := validateAmqp(ctx)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	d.amqpConnectionType = amqpData
@@ -199,7 +225,7 @@ func validateListBind(ctx *cli.Context, d *listBindType) error {
 func validateListVhost(ctx *cli.Context, d *listVhostType) error {
 	amqpData, err := validateAmqp(ctx)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	d.amqpConnectionType = amqpData
@@ -212,7 +238,7 @@ func validateListVhost(ctx *cli.Context, d *listVhostType) error {
 func validateListNode(ctx *cli.Context, d *listNodeType) error {
 	amqpData, err := validateAmqp(ctx)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	d.amqpConnectionType = amqpData
@@ -225,7 +251,7 @@ func validateListNode(ctx *cli.Context, d *listNodeType) error {
 func validateListPolicy(ctx *cli.Context, d *listPolicyType) error {
 	amqpData, err := validateAmqp(ctx)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	d.amqpConnectionType = amqpData
@@ -239,7 +265,7 @@ func validateListPolicy(ctx *cli.Context, d *listPolicyType) error {
 func validateListUser(ctx *cli.Context, d *listUserType) error {
 	amqpData, err := validateAmqp(ctx)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	d.amqpConnectionType = amqpData
@@ -252,7 +278,7 @@ func validateListUser(ctx *cli.Context, d *listUserType) error {
 func validateDeleteQueue(ctx *cli.Context, d *deleteQueueType) error {
 	amqpData, err := validateAmqp(ctx)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	d.amqpConnectionType = amqpData
@@ -264,7 +290,7 @@ func validateDeleteQueue(ctx *cli.Context, d *deleteQueueType) error {
 func validateDeleteExchange(ctx *cli.Context, d *deleteExchangeType) error {
 	amqpData, err := validateAmqp(ctx)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	d.amqpConnectionType = amqpData
@@ -276,7 +302,7 @@ func validateDeleteExchange(ctx *cli.Context, d *deleteExchangeType) error {
 func validateDeleteBind(ctx *cli.Context, d *deleteBindType) error {
 	amqpData, err := validateAmqp(ctx)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	d.amqpConnectionType = amqpData
@@ -291,7 +317,7 @@ func validateDeleteBind(ctx *cli.Context, d *deleteBindType) error {
 func validateDeletePolicy(ctx *cli.Context, d *deletePolicyType) error {
 	amqpData, err := validateAmqp(ctx)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	d.amqpConnectionType = amqpData
@@ -303,7 +329,7 @@ func validateDeletePolicy(ctx *cli.Context, d *deletePolicyType) error {
 func validateDeleteUser(ctx *cli.Context, d *deleteUserType) error {
 	amqpData, err := validateAmqp(ctx)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	d.amqpConnectionType = amqpData
@@ -315,7 +341,7 @@ func validateDeleteUser(ctx *cli.Context, d *deleteUserType) error {
 func validateDeleteVhost(ctx *cli.Context, d *deleteVhostType) error {
 	amqpData, err := validateAmqp(ctx)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	d.amqpConnectionType = amqpData
@@ -327,7 +353,7 @@ func validateDeleteVhost(ctx *cli.Context, d *deleteVhostType) error {
 func validatePublish(ctx *cli.Context, d *publishType) error {
 	amqpData, err := validateAmqp(ctx)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	d.amqpConnectionType = amqpData
@@ -351,7 +377,7 @@ func validatePublish(ctx *cli.Context, d *publishType) error {
 func validateConsume(ctx *cli.Context, d *consumeType) error {
 	amqpData, err := validateAmqp(ctx)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	d.amqpConnectionType = amqpData
@@ -368,7 +394,7 @@ func validateConsume(ctx *cli.Context, d *consumeType) error {
 func validateUpdateUser(ctx *cli.Context, d *updateUserType) error {
 	amqpData, err := validateAmqp(ctx)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	d.amqpConnectionType = amqpData
@@ -382,7 +408,7 @@ func validateUpdateUser(ctx *cli.Context, d *updateUserType) error {
 func validateUpdateVhost(ctx *cli.Context, d *updateVhostType) error {
 	amqpData, err := validateAmqp(ctx)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	d.amqpConnectionType = amqpData

@@ -52,8 +52,7 @@ func createBindJob(ctx *cli.Context) error {
 func createUserJob(ctx *cli.Context) error {
 	data := createUserType{}
 
-	err := validateCreateUser(ctx, &data)
-	if err != nil {
+	if err := validateCreateUser(ctx, &data); err != nil {
 		return err
 	}
 
@@ -68,8 +67,7 @@ func createUserJob(ctx *cli.Context) error {
 func createVhostJob(ctx *cli.Context) error {
 	data := createVhostType{}
 
-	err := validateCreateVhost(ctx, &data)
-	if err != nil {
+	if err := validateCreateVhost(ctx, &data); err != nil {
 		return err
 	}
 
@@ -84,8 +82,7 @@ func createVhostJob(ctx *cli.Context) error {
 func listQueueJob(ctx *cli.Context) error {
 	data := listQueueType{}
 
-	err := validateListQueue(ctx, &data)
-	if err != nil {
+	if err := validateListQueue(ctx, &data); err != nil {
 		return err
 	}
 
@@ -100,8 +97,7 @@ func listQueueJob(ctx *cli.Context) error {
 func listExchangeJob(ctx *cli.Context) error {
 	data := listExchangeType{}
 
-	err := validateListExchange(ctx, &data)
-	if err != nil {
+	if err := validateListExchange(ctx, &data); err != nil {
 		return err
 	}
 
@@ -116,8 +112,7 @@ func listExchangeJob(ctx *cli.Context) error {
 func listBindJob(ctx *cli.Context) error {
 	data := listBindType{}
 
-	err := validateListBind(ctx, &data)
-	if err != nil {
+	if err := validateListBind(ctx, &data); err != nil {
 		return err
 	}
 
@@ -132,8 +127,7 @@ func listBindJob(ctx *cli.Context) error {
 func listVhostJob(ctx *cli.Context) error {
 	data := listVhostType{}
 
-	err := validateListVhost(ctx, &data)
-	if err != nil {
+	if err := validateListVhost(ctx, &data); err != nil {
 		return err
 	}
 
@@ -148,8 +142,7 @@ func listVhostJob(ctx *cli.Context) error {
 func listNodeJob(ctx *cli.Context) error {
 	data := listNodeType{}
 
-	err := validateListNode(ctx, &data)
-	if err != nil {
+	if err := validateListNode(ctx, &data); err != nil {
 		return err
 	}
 
@@ -164,8 +157,7 @@ func listNodeJob(ctx *cli.Context) error {
 func listPolicyJob(ctx *cli.Context) error {
 	data := listPolicyType{}
 
-	err := validateListPolicy(ctx, &data)
-	if err != nil {
+	if err := validateListPolicy(ctx, &data); err != nil {
 		return err
 	}
 
@@ -180,8 +172,7 @@ func listPolicyJob(ctx *cli.Context) error {
 func listUserJob(ctx *cli.Context) error {
 	data := listUserType{}
 
-	err := validateListUser(ctx, &data)
-	if err != nil {
+	if err := validateListUser(ctx, &data); err != nil {
 		return err
 	}
 
@@ -241,8 +232,7 @@ func deleteBindJob(ctx *cli.Context) error {
 func deletePolicyJob(ctx *cli.Context) error {
 	data := deletePolicyType{}
 
-	err := validateDeletePolicy(ctx, &data)
-	if err != nil {
+	if err := validateDeletePolicy(ctx, &data); err != nil {
 		return err
 	}
 
@@ -257,8 +247,7 @@ func deletePolicyJob(ctx *cli.Context) error {
 func deleteUserJob(ctx *cli.Context) error {
 	data := deleteUserType{}
 
-	err := validateDeleteUser(ctx, &data)
-	if err != nil {
+	if err := validateDeleteUser(ctx, &data); err != nil {
 		return err
 	}
 
@@ -273,8 +262,7 @@ func deleteUserJob(ctx *cli.Context) error {
 func deleteVhostJob(ctx *cli.Context) error {
 	data := deleteVhostType{}
 
-	err := validateDeleteVhost(ctx, &data)
-	if err != nil {
+	if err := validateDeleteVhost(ctx, &data); err != nil {
 		return err
 	}
 
@@ -289,8 +277,7 @@ func deleteVhostJob(ctx *cli.Context) error {
 func updateUserJob(ctx *cli.Context) error {
 	data := updateUserType{}
 
-	err := validateUpdateUser(ctx, &data)
-	if err != nil {
+	if err := validateUpdateUser(ctx, &data); err != nil {
 		return err
 	}
 
@@ -305,8 +292,7 @@ func updateUserJob(ctx *cli.Context) error {
 func updateVhostJob(ctx *cli.Context) error {
 	data := updateVhostType{}
 
-	err := validateUpdateVhost(ctx, &data)
-	if err != nil {
+	if err := validateUpdateVhost(ctx, &data); err != nil {
 		return err
 	}
 

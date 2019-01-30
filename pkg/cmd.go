@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	configYaml = ".rabbitmqadmin.conf]"
+	configYaml = ".rmqctl.conf"
 )
 
 const (
@@ -88,23 +88,70 @@ func flags(f int) []cli.Flag {
 	switch f {
 	case generalAction:
 		return []cli.Flag{
-			altsrc.NewStringFlag(cli.StringFlag{Name: "username, u",
-				Usage: "cluster username"}),
-			altsrc.NewStringFlag(cli.StringFlag{Name: "password, p",
-				Usage: "cluster password"}),
-			altsrc.NewStringFlag(cli.StringFlag{Name: "host, H",
-				Usage: "cluster host"}),
-			altsrc.NewStringFlag(cli.StringFlag{Name: "vhost, V", Value: "/",
-				Usage: "cluster vhost"}),
-			altsrc.NewIntFlag(cli.IntFlag{Name: "port, P", Value: 5672,
-				Usage: "cluster port"}),
-			altsrc.NewIntFlag(cli.IntFlag{Name: "apiport", Value: 15672,
-				Usage: "cluster api port"}),
-			cli.StringFlag{Name: "config, c", Value: configDir,
+			altsrc.NewStringFlag(
+				cli.StringFlag{
+					Name:   "username",
+					Hidden: true,
+				},
+			),
+			altsrc.NewStringFlag(
+				cli.StringFlag{
+					Name:   "password",
+					Hidden: true,
+				},
+			),
+			altsrc.NewStringFlag(
+				cli.StringFlag{
+					Name:   "host",
+					Hidden: true,
+				},
+			),
+			altsrc.NewStringFlag(
+				cli.StringFlag{
+					Name:   "vhost",
+					Hidden: true,
+				},
+			),
+			altsrc.NewIntFlag(
+				cli.IntFlag{
+					Name:   "port",
+					Hidden: true,
+				},
+			),
+			altsrc.NewIntFlag(
+				cli.IntFlag{
+					Name:   "apiport",
+					Hidden: true,
+				},
+			),
+			cli.StringFlag{
+				Name:  "u",
+				Usage: "username"},
+			cli.StringFlag{
+				Name:  "p",
+				Usage: "password"},
+			cli.StringFlag{
+				Name:  "H",
+				Usage: "host"},
+			cli.StringFlag{
+				Name:  "V",
+				Value: "/",
+				Usage: "vhost"},
+			cli.IntFlag{
+				Name:  "P",
+				Value: 5672,
+				Usage: "amqp port"},
+			cli.IntFlag{
+				Name:  "AP",
+				Value: 15672,
+				Usage: "api port"},
+			cli.StringFlag{
+				Name:  "config,c",
+				Value: configDir,
 				Usage: "configuration file"},
-			cli.StringFlag{Name: "node, N", Value: "default",
-				Usage: "node described in the configuration file"},
-			cli.BoolFlag{Name: "debug, d", Usage: "run in debug mode"},
+			cli.BoolFlag{
+				Name:  "debug,d",
+				Usage: "prints out debug log"},
 		}
 	case createQueueAction:
 		return []cli.Flag{
