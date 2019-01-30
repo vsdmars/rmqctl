@@ -137,11 +137,13 @@ type (
 
 	publishType struct {
 		amqpConnectionType
-		ExchangeName string          `validate:"required"`
-		Key          string          `validate:"required"`
-		Mandatory    bool            `validate:"-"`
-		Immediate    bool            `validate:"-"`
-		Message      amqp.Publishing `validate:"required"`
+		ExchangeName string `validate:"required"`
+		Key          string `validate:"required"`
+		Mode         uint8  `validate:"min=0,max=2"`
+		Mandatory    bool   `validate:"-"`
+		Immediate    bool   `validate:"-"`
+		Burst        int    `validate:"required"`
+		Message      string `validate:"required"`
 	}
 
 	consumeType struct {

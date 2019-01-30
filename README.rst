@@ -17,6 +17,7 @@ rmqctl_
   :target: https://github.com/vsdmars/rmqctl/tree/v1.0.0
 .. _binary release v1.0.0: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.0
 .. _binary release v1.0.3: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.3
+.. _binary release v1.0.7: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.7
 
 .. ;; And now we continue with the actual content
 
@@ -33,9 +34,22 @@ commands like kubectl.
 Binary Release:
 ---------------
 
+`binary release v1.0.7`_
+ - Now supports burst message publish mode.
+
+   Alone with daemon mode, rmqctl can be used as stress test tool.
+
+   e.g.
+    $ rmqctl publish test_exchange scheduler "voyager" -b 1000000
+ - Support publish mode: Transient, Persistent
+ - Change default config file name to *rmqctl.conf*
+ - Change load config file name flag to '-c'
+ - Formalize debug log message.
+
 `binary release v1.0.3`_
- - Publish/Consume use amqp protocol. Other actions using rabbitmq API call.
- - bash/rawjson output format support.
+ - Publish/Consume use amqp protocol for performance.
+   Other actions using rabbitmq REST API calls.
+ - Now supports bash/rawjson output format.
 
 `binary release v1.0.0`_
 
@@ -69,6 +83,16 @@ We can tell rmqctl where to load the *rmqctl.conf* by using '-c' flag :
 =========
 Supports
 =========
+
+AMQP Protocol
+-------------
+rmqctl_ uses amqp protocol library for publishing and consuming messages from
+
+queue for speed, which supports burst message publishing and consuming daemon
+
+both can be used for stress test.
+
+
 
 Create
 ------
@@ -290,6 +314,25 @@ exchange *TEST_EXCHANGE_1* received the message.
    |TEST_QUEUE_3 |/     |true    |true       |rabbit@r1  |       |0         |TEST_QUEUE_3_HA |0
 
 
+Publish message to exchange in burst mode
+-----------------------------------------
+
+Publish message to a fanout exchange in burst mode,
+
+we'll see queues bounded to the exchange *TEST_EXCHANGE_1* received the message.
+
+::
+
+   $ rmqctl publish TEST_EXCHANGE_1 RUN "This is a test message" -b 424242
+   done
+
+   $ rmqctl list queue
+   |Name         |Vhost |Durable |AutoDelete |MasterNode |Status |Consumers |Policy          |Messages
+   |TEST_QUEUE_1 |/     |true    |false      |rabbit@r1  |       |0         |                |424243
+   |TEST_QUEUE_2 |/     |true    |true       |rabbit@r1  |       |0         |                |424243
+   |TEST_QUEUE_3 |/     |true    |true       |rabbit@r1  |       |0         |TEST_QUEUE_3_HA |0
+
+
 Consume queue's messages
 ------------------------
 
@@ -298,6 +341,8 @@ Consume queue's messages
    $ rmqctl consume TEST_QUEUE_1
    |Message
    |This is a test message
+   |This is a test message
+   ...
 
 
 
@@ -309,6 +354,9 @@ Consume queue's messages in daemon mode
    $ rmqctl consume TEST_QUEUE_2 -d
    |Message
    |This is a test message
+   |This is a test message
+   ...
+
 
 
 Create user/vhost/exchange bind, update user info/vhost tracing, etc.

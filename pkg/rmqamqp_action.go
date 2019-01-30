@@ -1,7 +1,9 @@
 package pkg
 
 import (
+	"fmt"
 	"net"
+	"runtime"
 	"time"
 
 	"github.com/streadway/amqp"
@@ -55,6 +57,35 @@ func connect(amqpconn *amqpConnectionType) (*amqp.Connection, error) {
 	return connection, nil
 }
 
+func burstPublish(
+	gcount int,
+	channel *amqp.Channel,
+	consume <-chan struct{},
+	payload amqp.Publishing,
+	data *publishType) chan string {
+
+	status := make(chan string)
+
+	go func() {
+		defer func() {
+			close(status)
+		}()
+
+		for range consume {
+			channel.Publish(
+				data.ExchangeName,
+				data.Key, // routing key
+				data.Mandatory,
+				data.Immediate,
+				payload,
+			)
+		}
+		status <- fmt.Sprintf("publish goroutine number: %v done.", gcount)
+	}()
+
+	return status
+}
+
 func publishMsg(conn *amqp.Connection, data *publishType) error {
 	channel, err := conn.Channel()
 	if err != nil {
@@ -66,20 +97,60 @@ func publishMsg(conn *amqp.Connection, data *publishType) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	if err = channel.Publish(
-		data.ExchangeName,
-		data.Key, // routing key
-		data.Mandatory,
-		data.Immediate,
-		data.Message,
-	); err != nil {
-		logger.Debug(
-			"publish failed",
-			zap.String("service", "amqp"),
-		)
+	gcount := int(float64(runtime.NumCPU()) * float64(0.9))
 
-		return cli.NewExitError(err.Error(), 1)
+	logger.Debug(
+		"publish using number of goroutines",
+		zap.String("service", "amqp"),
+		zap.Int("goroutines", gcount),
+	)
+
+	consumeChannel := make(chan struct{}, 100)
+	var gatherStatus []chan string
+
+	payload := amqp.Publishing{
+		ContentType:  "text/plain",
+		Body:         []byte(fmt.Sprintf("%s", data.Message)),
+		DeliveryMode: data.Mode,
+		MessageId:    "!42!",
 	}
+
+	// starts goroutines
+	for i := 0; i <= gcount; i++ {
+		gatherStatus = append(
+			gatherStatus,
+			burstPublish(
+				i,
+				channel,
+				consumeChannel,
+				payload,
+				data),
+		)
+	}
+
+	// burst publish
+	for i := 0; i < data.Burst; i++ {
+		consumeChannel <- struct{}{}
+	}
+
+	close(consumeChannel)
+
+	// reference:
+	// ContextType: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Complete_list_of_MIME_types
+
+	for _, s := range gatherStatus {
+		for m := range s {
+			logger.Debug(
+				"publish goroutine done",
+				zap.String("message", m),
+			)
+		}
+	}
+
+	logger.Debug(
+		"publish done",
+		zap.String("service", "amqp"),
+	)
 
 	return nil
 }

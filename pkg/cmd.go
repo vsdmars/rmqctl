@@ -156,28 +156,28 @@ func flags(f int) []cli.Flag {
 	case createQueueAction:
 		return []cli.Flag{
 			cli.BoolFlag{
-				Name:  "durable,du",
+				Name:  "durable,d",
 				Usage: "queue survives after cluster restarts",
 			},
 			cli.BoolFlag{
-				Name:  "autodelete, ad",
+				Name:  "autodelete,a",
 				Usage: "queue will be deleted if no active consumers",
 			},
 			cli.BoolFlag{
-				Name:  "ha",
+				Name:  "HA",
 				Usage: "HA enabled, creates policy name 'queuename_HA' under vhost -v (default: /)",
 			},
 			cli.StringFlag{
-				Name:  "hamode, hm",
+				Name:  "HAMODE",
 				Value: "all",
 				Usage: "HA mode, all|exactly|nodes",
 			},
 			cli.StringFlag{
-				Name:  "haparam, hp",
+				Name:  "HAPARAM",
 				Usage: "HA parameters",
 			},
 			cli.StringFlag{
-				Name:  "syncmode, sm",
+				Name:  "HASYNC",
 				Value: "automatic",
 				Usage: "HA SYNC mode, automatic|manual",
 			},
@@ -185,23 +185,23 @@ func flags(f int) []cli.Flag {
 	case createExchangeAction:
 		return []cli.Flag{
 			cli.StringFlag{
-				Name:  "type, t",
+				Name:  "type,t",
 				Value: "direct",
 				Usage: "kind, direct|fanout|topic|headers",
 			},
 			cli.BoolFlag{
-				Name:  "durable,du",
+				Name:  "durable,d",
 				Usage: "survives after cluster restarts",
 			},
 			cli.BoolFlag{
-				Name:  "autodelete, ad",
+				Name:  "autodelete,a",
 				Usage: "exchange will be deleted if no active consumers",
 			},
 		}
 	case createBindAction:
 		return []cli.Flag{
 			cli.StringFlag{
-				Name:  "type, t",
+				Name:  "type,t",
 				Value: "queue",
 				Usage: "type, queue|exchange",
 			},
@@ -209,7 +209,7 @@ func flags(f int) []cli.Flag {
 	case createUserAction:
 		return []cli.Flag{
 			cli.StringFlag{
-				Name:  "tag, t",
+				Name:  "tag,t",
 				Value: "",
 				Usage: "tag, none|management|policymaker|monitoring|administrator",
 			},
@@ -217,7 +217,7 @@ func flags(f int) []cli.Flag {
 	case createVhostAction:
 		return []cli.Flag{
 			cli.BoolFlag{
-				Name:  "trace, t",
+				Name:  "trace,t",
 				Usage: "enable vhost tracing",
 			},
 		}
@@ -256,7 +256,7 @@ func flags(f int) []cli.Flag {
 	case listBindAction:
 		return []cli.Flag{
 			cli.BoolFlag{
-				Name:  "all, a",
+				Name:  "all,a",
 				Usage: "list bindings from all vhosts",
 			},
 			cli.StringFlag{
@@ -268,10 +268,11 @@ func flags(f int) []cli.Flag {
 	case listPolicyAction:
 		return []cli.Flag{
 			cli.BoolFlag{
-				Name:  "all, a",
+				Name:  "all,a",
 				Usage: "list policies from all vhosts",
 			},
-			cli.StringFlag{Name: "o",
+			cli.StringFlag{
+				Name:  "o",
 				Value: "plain",
 				Usage: "output format, plain|json|rawjson|bash",
 			},
@@ -287,39 +288,49 @@ func flags(f int) []cli.Flag {
 	case deleteBindAction:
 		return []cli.Flag{
 			cli.StringFlag{
-				Name:  "type, t",
+				Name:  "type,t",
 				Value: "queue",
 				Usage: "type, queue|exchange",
 			},
 		}
 	case publishAction:
 		return []cli.Flag{
+			cli.IntFlag{
+				Name:  "burst,b",
+				Value: 1,
+				Usage: "burst publishing",
+			},
+			cli.StringFlag{
+				Name:  "mode",
+				Value: "transient",
+				Usage: "publish deliver mode, transient|persistent",
+			},
 			cli.BoolFlag{
-				Name:  "mandatory, m",
+				Name:  "mandatory,m",
 				Usage: "if no queues bound to exchange, delivery fails",
 			},
 			cli.BoolFlag{
-				Name:  "immediate, i",
+				Name:  "immediate,i",
 				Usage: "if no consumers on the matched queue, delivery fails",
 			},
 		}
 	case consumeAction:
 		return []cli.Flag{
 			cli.BoolFlag{
-				Name:  "daemon, d",
+				Name:  "daemon,d",
 				Usage: "daemon mode",
 			},
 			cli.StringFlag{
-				Name:  "acktype, t",
+				Name:  "acktype,t",
 				Value: "ack",
 				Usage: "acknowledge type, ack|nack|reject",
 			},
 			cli.BoolFlag{
-				Name:  "autoack, a",
+				Name:  "autoack,a",
 				Usage: "acknowledge by default once receives message",
 			},
 			cli.BoolFlag{
-				Name:  "nowait, nw",
+				Name:  "nowait,nw",
 				Usage: "begins without waiting cluster to confirm",
 			},
 			cli.StringFlag{
@@ -331,7 +342,7 @@ func flags(f int) []cli.Flag {
 	case updateUserAction:
 		return []cli.Flag{
 			cli.StringFlag{
-				Name:  "tag, t",
+				Name:  "tag,t",
 				Value: "",
 				Usage: "tag, none|management|policymaker|monitoring|administrator",
 			},
@@ -339,7 +350,7 @@ func flags(f int) []cli.Flag {
 	case updateVhostAction:
 		return []cli.Flag{
 			cli.BoolFlag{
-				Name:  "trace, t",
+				Name:  "trace,t",
 				Usage: "enable vhost tracing",
 			},
 		}

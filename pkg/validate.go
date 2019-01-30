@@ -1,10 +1,8 @@
 package pkg
 
 import (
-	"fmt"
 	"strconv"
 
-	"github.com/streadway/amqp"
 	"go.uber.org/zap"
 	validator "gopkg.in/go-playground/validator.v9"
 	cli "gopkg.in/urfave/cli.v1"
@@ -90,10 +88,10 @@ func validateCreateQueue(ctx *cli.Context, d *createQueueType) error {
 	d.QueueName = ctx.Args().First()
 
 	// HA variables
-	d.Ha = ctx.Bool("ha")
-	d.HaMode = ctx.String("hm")
-	d.HaParam = ctx.String("hp")
-	d.HaSyncMode = ctx.String("sm")
+	d.Ha = ctx.Bool("HA")
+	d.HaMode = ctx.String("HAMODE")
+	d.HaParam = ctx.String("HAPARAM")
+	d.HaSyncMode = ctx.String("HASYNC")
 
 	// Check HA variables setting
 	if d.Ha {
@@ -360,15 +358,18 @@ func validatePublish(ctx *cli.Context, d *publishType) error {
 	d.Immediate = ctx.Bool("immediate")
 	d.Mandatory = ctx.Bool("mandatory")
 	d.ExchangeName = ctx.Args().First()
+	d.Burst = ctx.Int("burst")
 	d.Key = ctx.Args().Get(1)
+	d.Message = ctx.Args().Get(2)
 
-	if msg := ctx.Args().Get(2); msg != "" {
-		d.Message = amqp.Publishing{
-			ContentType:  "text/plain",
-			Body:         []byte(fmt.Sprintf("%s", msg)),
-			DeliveryMode: amqp.Persistent,
-			MessageId:    "!42!",
-		}
+	mode := ctx.String("mode")
+
+	if mode == "transient" {
+		d.Mode = 0
+	} else if mode == "persistent" {
+		d.Mode = 2
+	} else {
+		d.Mode = 3
 	}
 
 	return validates(d)
