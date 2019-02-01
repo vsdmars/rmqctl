@@ -3,7 +3,6 @@ rmqctl_
 
 .. All external links are here
 .. _rmqctl: https://github.com/vsdmars/rmqctl
-.. _rabbitmqadmin: https://www.rabbitmq.com/management-cli.html
 .. _rmqctl.conf: ./rmqctl.conf
 .. |travis| image:: https://api.travis-ci.org/vsdmars/rmqctl.svg?branch=v1
   :target: https://travis-ci.org/vsdmars/rmqctl
@@ -25,8 +24,7 @@ rmqctl_
 
 ----
 
-rmqctl is a Golang version of `rabbitmqadmin`_ with simular
-commands like kubectl.
+rmqctl is a kubectl alike tool for rabbitmq.
 
 ----
 
@@ -151,11 +149,11 @@ Create queue
 ::
 
    // TEST_QUEUE_1 created as durable
-   $ rmqctl create queue TEST_QUEUE_1 --du
+   $ rmqctl create queue TEST_QUEUE_1 -d
    done
 
    // TEST_QUEUE_2 created as durable and autodelete
-   $ rmqctl create queue TEST_QUEUE_2 --du --ad
+   $ rmqctl create queue TEST_QUEUE_2 -d -a
    done
 
 
@@ -174,7 +172,7 @@ rmqctl will automatically create queue's HA policy with name: QueueName_HA
 
 ::
 
-   $ rmqctl create queue TEST_QUEUE_3 --ha
+   $ rmqctl create queue TEST_QUEUE_3 --HA
    done
 
 
@@ -229,7 +227,7 @@ Create exchange
 
 ::
 
-  $ rmqctl create exchange TEST_EXCHANGE_1 --durable -t fanout
+  $ rmqctl create exchange TEST_EXCHANGE_1 -d -t fanout
   done
 
 
@@ -361,7 +359,7 @@ Consume queue's messages in daemon mode
 
 Create user/vhost/exchange bind, update user info/vhost tracing, etc.
 ---------------------------------------------------------------------
-Use --help for specific details.
+--help for more details.
 
 ::
 
