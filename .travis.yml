@@ -40,8 +40,8 @@ script:
     bazel \
       --bazelrc=.bazelrc \
       --output_base=$HOME/.cache/bazel \
-      run rmqctl -- --username guest --password guest \
-      --host localhost --vhost / --port 5672 --apiport 15672 list queue
+      run rmqctl -- -u guest -p guest \
+      -H localhost -V / -P 5672 -A 15672 list queue
 
 notifications:
   email:
