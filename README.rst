@@ -83,6 +83,7 @@ Command arguments have higher precedence if provided.
 
 
 ::
+
  Loads rmqctl.conf from other location
  $ rmqctl -c path/to/rmqctl.conf COMMANDS
 
