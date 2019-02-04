@@ -1,7 +1,9 @@
 package pkg
 
 import (
+	"crypto/tls"
 	"fmt"
+	"net/http"
 	"net/url"
 	"time"
 
@@ -10,21 +12,75 @@ import (
 	cli "gopkg.in/urfave/cli.v1"
 )
 
+const httpTLSTimeout = 5
+const httpReqTimeout = 3
+
 func connectAPI(amqpconn *amqpConnectionType) (*rh.Client, error) {
-	apiURL := url.URL{
-		Scheme: "http",
-		Host: fmt.Sprintf(
-			"%s:%d",
-			amqpconn.Host,
-			amqpconn.APIPort,
-		),
+	logurl := func(u url.URL) {
+		logger.Debug(
+			"api URL",
+			zap.String("service", "api"),
+			zap.String("URL", u.String()),
+		)
 	}
 
-	logger.Debug(
-		"api URL",
-		zap.String("service", "api"),
-		zap.String("api", apiURL.String()),
-	)
+	var apiURL url.URL
+	var transport *http.Transport
+
+	if amqpconn.TLS {
+		certfile, keyfile, err := getCertPath()
+		if err != nil {
+			return nil, err
+		}
+
+		apiURL = url.URL{
+			Scheme: "https",
+			Host: fmt.Sprintf(
+				"%s:%d",
+				amqpconn.Host,
+				amqpconn.APIPort,
+			),
+		}
+
+		logurl(apiURL)
+
+		cfg := &tls.Config{}
+
+		cert, err := tls.LoadX509KeyPair(certfile, keyfile)
+		if err != nil {
+			logger.Debug(
+				"load x509 key pair failed",
+				zap.String("service", "api"),
+			)
+
+			return nil, err
+		}
+
+		cfg.Certificates = append(cfg.Certificates, cert)
+
+		transport = &http.Transport{
+			TLSClientConfig:     cfg,
+			TLSHandshakeTimeout: time.Duration(httpTLSTimeout) * time.Second,
+		}
+
+		logger.Debug(
+			"timeout",
+			zap.String("service", "api"),
+			zap.String("tls handshake timeout", (time.Duration(httpTLSTimeout)*time.Second).String()),
+		)
+
+	} else {
+		apiURL = url.URL{
+			Scheme: "http",
+			Host: fmt.Sprintf(
+				"%s:%d",
+				amqpconn.Host,
+				amqpconn.APIPort,
+			),
+		}
+
+		logurl(apiURL)
+	}
 
 	conn, err := rh.NewClient(
 		apiURL.String(),
@@ -40,14 +96,18 @@ func connectAPI(amqpconn *amqpConnectionType) (*rh.Client, error) {
 		return nil, cli.NewExitError(err.Error(), 1)
 	}
 
-	// http client connection timeout in 3 seconds
-	conn.SetTimeout(3 * time.Second)
+	// http client request timeout in 3 seconds
+	conn.SetTimeout(time.Duration(httpReqTimeout) * time.Second)
 
 	logger.Debug(
 		"timeout",
 		zap.String("service", "api"),
-		zap.String("timeout", (3*time.Second).String()),
+		zap.String("request timeout", (time.Duration(httpReqTimeout)*time.Second).String()),
 	)
+
+	if amqpconn.TLS {
+		conn.SetTransport(transport)
+	}
 
 	return conn, nil
 }

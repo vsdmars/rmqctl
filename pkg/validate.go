@@ -10,7 +10,8 @@ import (
 
 func logValidation(err error) {
 	for _, err := range err.(validator.ValidationErrors) {
-		logger.Debug("validation error",
+		logger.Debug(
+			"validation error",
 			zap.String("namespace", err.Namespace()),
 			zap.String("field", err.Field()),
 			zap.String("structNamespace", err.StructNamespace()),
@@ -40,6 +41,7 @@ func validateAmqp(ctx *cli.Context) (amqpConnectionType, error) {
 	var vhost string
 	var port int
 	var aport int
+	var tls bool
 
 	if username = ctx.GlobalString("u"); len(username) == 0 {
 		username = ctx.GlobalString("username")
@@ -56,8 +58,11 @@ func validateAmqp(ctx *cli.Context) (amqpConnectionType, error) {
 	if port = ctx.GlobalInt("P"); port == 0 {
 		port = ctx.GlobalInt("port")
 	}
-	if aport = ctx.GlobalInt("AP"); aport == 0 {
+	if aport = ctx.GlobalInt("A"); aport == 0 {
 		aport = ctx.GlobalInt("apiport")
+	}
+	if tls = ctx.GlobalBool("T"); !tls {
+		tls = ctx.GlobalBool("tls")
 	}
 
 	amqpData := amqpConnectionType{
@@ -67,6 +72,7 @@ func validateAmqp(ctx *cli.Context) (amqpConnectionType, error) {
 		Vhost:    vhost,
 		Port:     port,
 		APIPort:  aport,
+		TLS:      tls,
 	}
 
 	if err := validates(amqpData); err != nil {
@@ -97,25 +103,34 @@ func validateCreateQueue(ctx *cli.Context, d *createQueueType) error {
 	if d.Ha {
 		if d.HaMode == "exactly" {
 			if _, err := strconv.Atoi(d.HaParam); err != nil {
-				logger.Debug("validation error, 'exactly' HA mode should have interger parameter",
+				logger.Debug(
+					"validation error, 'exactly' HA mode should have interger parameter",
 					zap.String("HA MODE", d.HaMode),
-					zap.String("HA Param", d.HaParam))
+					zap.String("HA Param", d.HaParam),
+				)
+
 				return cli.NewExitError("command error, use --help to see the proper usage.", 1)
 			}
 		}
 		if d.HaMode == "nodes" {
 			if d.HaParam == "" {
-				logger.Debug("validation error, 'nodes' HA mode should have node's name parameter",
+				logger.Debug(
+					"validation error, 'nodes' HA mode should have node's name parameter",
 					zap.String("HA MODE", d.HaMode),
-					zap.String("HA Param", d.HaParam))
+					zap.String("HA Param", d.HaParam),
+				)
+
 				return cli.NewExitError("command error, use --help to see the proper usage.", 1)
 			}
 		}
 		if d.HaMode == "all" {
 			if d.HaParam != "" {
-				logger.Debug("validation error, 'all' HA mode should not have parameter",
+				logger.Debug(
+					"validation error, 'all' HA mode should not have parameter",
 					zap.String("HA MODE", d.HaMode),
-					zap.String("HA Param", d.HaParam))
+					zap.String("HA Param", d.HaParam),
+				)
+
 				return cli.NewExitError("command error, use --help to see the proper usage.", 1)
 			}
 		}

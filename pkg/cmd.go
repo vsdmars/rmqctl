@@ -124,6 +124,12 @@ func flags(f int) []cli.Flag {
 					Hidden: true,
 				},
 			),
+			altsrc.NewBoolFlag(
+				cli.BoolFlag{
+					Name:   "tls",
+					Hidden: true,
+				},
+			),
 			cli.StringFlag{
 				Name:  "u",
 				Usage: "username"},
@@ -135,16 +141,16 @@ func flags(f int) []cli.Flag {
 				Usage: "host"},
 			cli.StringFlag{
 				Name:  "V",
-				Value: "/",
 				Usage: "vhost"},
 			cli.IntFlag{
 				Name:  "P",
-				Value: 5672,
 				Usage: "amqp port"},
 			cli.IntFlag{
-				Name:  "AP",
-				Value: 15672,
+				Name:  "A",
 				Usage: "api port"},
+			cli.BoolFlag{
+				Name:  "T",
+				Usage: "enable tls for amqp and api"},
 			cli.StringFlag{
 				Name:  "config,c",
 				Value: configDir,
@@ -165,7 +171,7 @@ func flags(f int) []cli.Flag {
 			},
 			cli.BoolFlag{
 				Name:  "HA",
-				Usage: "HA enabled, creates policy name 'queuename_HA' under vhost -v (default: /)",
+				Usage: "HA enabled, creates policy name 'queuename_HA' under vhost -v",
 			},
 			cli.StringFlag{
 				Name:  "HAMODE",
@@ -210,7 +216,6 @@ func flags(f int) []cli.Flag {
 		return []cli.Flag{
 			cli.StringFlag{
 				Name:  "tag,t",
-				Value: "",
 				Usage: "tag, none|management|policymaker|monitoring|administrator",
 			},
 		}
@@ -343,7 +348,6 @@ func flags(f int) []cli.Flag {
 		return []cli.Flag{
 			cli.StringFlag{
 				Name:  "tag,t",
-				Value: "",
 				Usage: "tag, none|management|policymaker|monitoring|administrator",
 			},
 		}

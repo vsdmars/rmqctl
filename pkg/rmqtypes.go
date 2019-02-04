@@ -13,6 +13,7 @@ type (
 		Vhost    string `validate:"required"`
 		Port     int    `validate:"required"`
 		APIPort  int    `validate:"required"`
+		TLS      bool   `validate:"-"`
 	}
 
 	createQueueType struct {

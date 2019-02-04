@@ -12,11 +12,12 @@ rmqctl_
   :target: https://godoc.org/github.com/vsdmars/rmqctl
 .. |license| image:: https://img.shields.io/github/license/mashape/apistatus.svg?style=flat
   :target: ./LICENSE
-.. |release| image:: https://img.shields.io/badge/release-v1.0.0-blue.svg
+.. |release| image:: https://img.shields.io/badge/release-v1.0.8-blue.svg
   :target: https://github.com/vsdmars/rmqctl/tree/v1.0.0
 .. _binary release v1.0.0: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.0
 .. _binary release v1.0.3: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.3
 .. _binary release v1.0.7: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.7
+.. _binary release v1.0.8: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.8
 
 .. ;; And now we continue with the actual content
 
@@ -24,7 +25,7 @@ rmqctl_
 
 ----
 
-rmqctl is a kubectl alike tool for rabbitmq.
+rmqctl is *the* swiss-knife tool for rabbitmq with kubectl like commands.
 
 ----
 
@@ -32,14 +33,25 @@ rmqctl is a kubectl alike tool for rabbitmq.
 Binary Release:
 ---------------
 
+`binary release v1.0.8`_
+ - Now supports TLS connection for AMQP and HTTPS
+ - New 'tls' entry in rmqctl.conf_
+ - New flag '-T' indicates using TLS connection.
+ - Bug fix.
+
+
 `binary release v1.0.7`_
  - Now supports burst message publish mode.
 
-   Alone with daemon mode, rmqctl can be used as stress test tool.
+   Alone with daemon mode, rmqctl is used as a stress test tool for rabbitmq.
 
    e.g.
-    $ rmqctl publish test_exchange scheduler "voyager" -b 1000000
- - Support publish mode: Transient, Persistent
+    $ rmqctl publish exchange_name routing_key "MESSAGE" -b 1000000
+
+   Publish with other payload
+    $ rmqctl publish exchange_name routing_key "$(cat payload.json)" -b 1000000
+
+ - Now supports publish mode: Transient, Persistent
  - Change default config file name to *rmqctl.conf*
  - Change load config file name flag to '-c'
  - Formalize debug log message.
@@ -50,13 +62,14 @@ Binary Release:
  - Now supports bash/rawjson output format.
 
 `binary release v1.0.0`_
+ - init. release
 
 
 rmqctl.conf_
--------------------
+-------------
 
-rmqctl.conf (yaml format) contains connection information to
-rabbitmq cluster.
+rmqctl loads rmqctl.conf (yaml) under working directory if there is one.
+Command arguments have higher precedence if provided.
 
 .. code:: yaml
 
@@ -64,18 +77,14 @@ rabbitmq cluster.
    password: guest
    port: 5672
    apiport: 15672
-   host: "127.0.0.1"
+   host: localhost
+   tls: true
    vhost: "/"
 
 
-rmqctl by default loads *rmqctl.conf* under the working directory.
-
-We can tell rmqctl where to load the *rmqctl.conf* by using '-c' flag :
-
-
 ::
-
- rmqctl -c path_to_rmqctl.conf COMMANDS
+ Loads rmqctl.conf from other location
+ $ rmqctl -c path/to/rmqctl.conf COMMANDS
 
 
 =========
@@ -84,11 +93,11 @@ Supports
 
 AMQP Protocol
 -------------
-rmqctl_ uses amqp protocol library for publishing and consuming messages from
+rmqctl_ uses amqp protocol library for publish/consume message for speed.
 
-queue for speed, which supports burst message publishing and consuming daemon
+rmqctl_ supports burst publish/daemon consume, act as a perfect tool for stress test
 
-both can be used for stress test.
+and debugging the application.
 
 
 
@@ -99,6 +108,7 @@ Create
 - queue/exchange binding
 - user
 - vhost
+- --help for more features
 
 
 List
@@ -110,6 +120,7 @@ List
 - vhost
 - node
 - policy
+- --help for more features
 
 
 Delete
@@ -120,23 +131,29 @@ Delete
 - user
 - vhost
 - policy
+- --help for more features
 
 
 Update
 ------
 - vhost
 - user
+- --help for more features
 
 
 Publish
 -------
-- Publish message to exchange with routing key
+- Publish with routing key
+- Burst publishing
+- Supports transient|persistent modes
+- --help for more features
 
 
 Consume
 -------
-- Consume message with specified acknowledge mode
-- Run as daemon, consuming message direct to STDOUT
+- Consume supports ack|nack|reject|auto-ack acknowledge modes.
+- Run as daemon, consume on-demand.
+- --help for more features
 
 
 =====
@@ -153,22 +170,22 @@ Create queue
    done
 
    // TEST_QUEUE_2 created as durable and autodelete
-   $ rmqctl create queue TEST_QUEUE_2 -d -a
+   $ rmqctl -d create queue TEST_QUEUE_2 -d -a
    done
 
 
 Create queue in HA mode
 -----------------------
 
-We can create queue in HA mode.
+rmqctl is able to create queue in HA mode.
 
-There are 3 modes: all(default),exactly,nodes
+Three modes supported: all(default),exactly,nodes
 
-Below command will create queue TEST_QUEUE_3 in HA mode,
+Following command creates TEST_QUEUE_3 queue in HA mode,
 
-which by default it will have slaves in all other rabbitmq nodes.
+which by default it has queue slaves in all other rabbitmq nodes (default: 'all' mode)
 
-rmqctl will automatically create queue's HA policy with name: QueueName_HA
+rmqctl automatically creates queue's HA policy with name: QueueName_HA
 
 ::
 
@@ -270,33 +287,40 @@ List particular exchange in json
    }
 
 
-Create queue binding
---------------------
+Create queue/exchange binding
+-----------------------------
+
+rmqctl is able to create exchange bindings as well.
 
 ::
 
-  $ rmqctl create bind TEST_EXCHANGE_1 TEST_QUEUE_1 RUN
+  $ rmqctl create bind TEST_EXCHANGE_1 TEST_QUEUE_1 ROUTING_KEY
   done
-  $ rmqctl create bind TEST_EXCHANGE_1 TEST_QUEUE_2 RUN
+  $ rmqctl create bind TEST_EXCHANGE_1 TEST_QUEUE_2 ROUTING_KEY
+  done
+
+  Creates exchange binding
+  $ rmqctl create bind TEST_EXCHANGE_1 TEST_EXCHANGE_2 ROUTING_KEY -t exchange
   done
 
 
-List queue binding
-------------------
+List queue/exchange binding
+---------------------------
 
 ::
 
   $ rmqctl list bind
-  |Source          |Destination  |Vhost |Key          |DestinationType
-  |                |TEST_QUEUE_1 |/     |TEST_QUEUE_1 |queue
-  |                |TEST_QUEUE_2 |/     |TEST_QUEUE_2 |queue
-  |TEST_EXCHANGE_1 |TEST_QUEUE_1 |/     |RUN          |queue
+  |Source          |Destination     |Vhost |Key          |DestinationType
+  |                |TEST_QUEUE_1    |/     |TEST_QUEUE_1 |queue
+  |                |TEST_QUEUE_2    |/     |TEST_QUEUE_2 |queue
+  |TEST_EXCHANGE_1 |TEST_QUEUE_1    |/     |RUN          |queue
+  |TEST_EXCHANGE_1 |TEST_EXCHANGE_2 |/     |RUN          |exchange
 
 
-Publish message to exchange
----------------------------
+Publish message
+---------------
 
-Publish message to a fanout exchange, we'll see queues bounded to the
+Publish to a fanout exchange, observing queues bounded to the
 
 exchange *TEST_EXCHANGE_1* received the message.
 
@@ -312,12 +336,12 @@ exchange *TEST_EXCHANGE_1* received the message.
    |TEST_QUEUE_3 |/     |true    |true       |rabbit@r1  |       |0         |TEST_QUEUE_3_HA |0
 
 
-Publish message to exchange in burst mode
------------------------------------------
+Publish message in burst mode
+-----------------------------
 
-Publish message to a fanout exchange in burst mode,
+Publish to a fanout exchange in burst mode,
 
-we'll see queues bounded to the exchange *TEST_EXCHANGE_1* received the message.
+observing queues bounded to the exchange *TEST_EXCHANGE_1* received the message.
 
 ::
 
@@ -331,8 +355,8 @@ we'll see queues bounded to the exchange *TEST_EXCHANGE_1* received the message.
    |TEST_QUEUE_3 |/     |true    |true       |rabbit@r1  |       |0         |TEST_QUEUE_3_HA |0
 
 
-Consume queue's messages
-------------------------
+Consume message
+---------------
 
 ::
 
@@ -344,8 +368,8 @@ Consume queue's messages
 
 
 
-Consume queue's messages in daemon mode
----------------------------------------
+Consume message in daemon mode
+------------------------------
 
 ::
 
@@ -357,8 +381,8 @@ Consume queue's messages in daemon mode
 
 
 
-Create user/vhost/exchange bind, update user info/vhost tracing, etc.
----------------------------------------------------------------------
+Other features including list/update user/vhost/node information, vhost tracing, etc.
+-------------------------------------------------------------------------------------
 --help for more details.
 
 ::

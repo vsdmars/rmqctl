@@ -1,6 +1,7 @@
 package pkg
 
 import (
+	"crypto/tls"
 	"fmt"
 	"net"
 	"runtime"
@@ -11,47 +12,122 @@ import (
 	cli "gopkg.in/urfave/cli.v1"
 )
 
+const tcpTimeout = 3
+const tlsTimeout = 5
+
 func connect(amqpconn *amqpConnectionType) (*amqp.Connection, error) {
-	amqpURL := amqp.URI{Scheme: "amqp",
-		Host:     amqpconn.Host,
-		Username: amqpconn.Username,
-		Password: "XXXXX",
-		Port:     amqpconn.Port,
-		Vhost:    amqpconn.Vhost,
+	var amqpURI amqp.URI
+	var connection *amqp.Connection
+
+	logit := func(amqpURI amqp.URI) {
+		logger.Debug(
+			"amqp URI",
+			zap.String("service", "amqp"),
+			zap.String("URI", amqpURI.String()),
+		)
 	}
 
-	logger.Debug(
-		"amqp URL",
-		zap.String("service", "amqp"),
-		zap.String("URL", amqpURL.String()),
-	)
-
-	amqpURL.Password = amqpconn.Password
-
-	logger.Debug(
-		"timeout",
-		zap.String("service", "amqp"),
-		zap.String("timeout", (3*time.Second).String()),
-	)
-
-	// tcp connection timeout in 3 seconds.
-	connection, err := amqp.DialConfig(
-		amqpURL.String(),
-		amqp.Config{
-			Vhost: amqpconn.Vhost,
-			Dial: func(network, addr string) (net.Conn, error) {
-				return net.DialTimeout(network, addr, 3*time.Second)
-			},
-			Heartbeat: 10 * time.Second,
-			Locale:    "en_US"},
-	)
-	if err != nil {
+	logtimeout := func(t int) {
 		logger.Debug(
-			"amqp create connection failed",
+			"timeout",
 			zap.String("service", "amqp"),
+			zap.String("timeout", (time.Duration(t)*time.Second).String()),
 		)
+	}
 
-		return nil, cli.NewExitError(err.Error(), 1)
+	if amqpconn.TLS {
+		certfile, keyfile, err := getCertPath()
+		if err != nil {
+			return nil, err
+		}
+
+		amqpURI = amqp.URI{Scheme: "amqps",
+			Host:     amqpconn.Host,
+			Username: amqpconn.Username,
+			Password: "XXXXX",
+			Port:     amqpconn.Port,
+			Vhost:    amqpconn.Vhost,
+		}
+
+		logit(amqpURI)
+
+		amqpURI.Password = amqpconn.Password
+
+		cfg := &tls.Config{}
+
+		cert, err := tls.LoadX509KeyPair(certfile, keyfile)
+		if err != nil {
+			logger.Debug(
+				"load x509 key pair failed",
+				zap.String("service", "amqp"),
+			)
+
+			return nil, err
+		}
+
+		cfg.Certificates = append(cfg.Certificates, cert)
+
+		logtimeout(tlsTimeout)
+
+		// tcp connection timeout in 5 seconds.
+		conn, err := amqp.DialConfig(
+			amqpURI.String(),
+			amqp.Config{
+				Vhost: amqpconn.Vhost,
+				Dial: func(network, addr string) (net.Conn, error) {
+					return net.DialTimeout(network, addr, time.Duration(tlsTimeout)*time.Second)
+				},
+				Heartbeat:       10 * time.Second,
+				Locale:          "en_US",
+				TLSClientConfig: cfg,
+			},
+		)
+		if err != nil {
+			logger.Debug(
+				"amqp create connection failed",
+				zap.String("service", "amqp"),
+			)
+
+			return nil, cli.NewExitError(err.Error(), 1)
+		}
+
+		connection = conn
+	} else {
+		amqpURI = amqp.URI{Scheme: "amqp",
+			Host:     amqpconn.Host,
+			Username: amqpconn.Username,
+			Password: "XXXXX",
+			Port:     amqpconn.Port,
+			Vhost:    amqpconn.Vhost,
+		}
+
+		logit(amqpURI)
+
+		amqpURI.Password = amqpconn.Password
+
+		logtimeout(tcpTimeout)
+
+		// tcp connection timeout in 3 seconds.
+		conn, err := amqp.DialConfig(
+			amqpURI.String(),
+			amqp.Config{
+				Vhost: amqpconn.Vhost,
+				Dial: func(network, addr string) (net.Conn, error) {
+					return net.DialTimeout(network, addr, time.Duration(tcpTimeout)*time.Second)
+				},
+				Heartbeat: 10 * time.Second,
+				Locale:    "en_US"},
+		)
+		if err != nil {
+			logger.Debug(
+				"amqp create connection failed",
+				zap.String("service", "amqp"),
+			)
+
+			return nil, cli.NewExitError(err.Error(), 1)
+		}
+
+		connection = conn
 	}
 
 	return connection, nil
