@@ -186,7 +186,7 @@ func publishMsg(conn *amqp.Connection, data *publishType) error {
 
 	payload := amqp.Publishing{
 		ContentType:  "text/plain",
-		Body:         []byte(fmt.Sprintf("%s", data.Message)),
+		Body:         []byte(data.Message),
 		DeliveryMode: data.Mode,
 		MessageId:    "!42!",
 	}
