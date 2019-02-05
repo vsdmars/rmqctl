@@ -4,6 +4,7 @@ rmqctl_
 .. All external links are here
 .. _rmqctl: https://github.com/vsdmars/rmqctl
 .. _rmqctl.conf: ./rmqctl.conf
+.. _rabbitmq_tls.config: ./example/rabbitmq_tls.config
 .. |travis| image:: https://api.travis-ci.org/vsdmars/rmqctl.svg?branch=v1
   :target: https://travis-ci.org/vsdmars/rmqctl
 .. |go report| image:: https://goreportcard.com/badge/github.com/vsdmars/rmqctl
@@ -99,6 +100,30 @@ rmqctl_ uses amqp protocol library for publish/consume message for speed.
 rmqctl_ supports burst publish/daemon consume, act as a perfect tool for stress test
 
 and debugging the application.
+
+
+TTL support
+-----------
+Place client certificate and private key pair with read only permission (0400)
+
+under $HOME/.ssh/ name as follows:
+
+
+::
+
+   ~/.ssh/rmq_cert.pem
+   ~/.ssh/rmq_key.pem
+
+
+If rabbitmq server using self-signed certificate,
+
+remember to register self-signed CA into client's host system.
+
+Setting up rabbitmq server TLS support for both
+
+AMQP and API Service config file can refere to example:
+
+rabbitmq_tls.config_
 
 
 
