@@ -102,7 +102,7 @@ rmqctl_ supports burst publish/daemon consume, act as a perfect tool for stress 
 and debugging the application.
 
 
-TTL support
+TLS support
 -----------
 Place client certificate and private key pair with read only permission (0400)
 
