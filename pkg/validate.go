@@ -89,8 +89,8 @@ func validateCreateQueue(ctx *cli.Context, d *createQueueType) error {
 	}
 
 	d.amqpConnectionType = amqpData
-	d.Durable = ctx.Bool("du")
-	d.Autodelete = ctx.Bool("ad")
+	d.Durable = ctx.Bool("durable")
+	d.Autodelete = ctx.Bool("autodelete")
 	d.QueueName = ctx.Args().First()
 
 	// HA variables
@@ -146,8 +146,8 @@ func validateCreateExchange(ctx *cli.Context, d *createExchangeType) error {
 	}
 
 	d.amqpConnectionType = amqpData
-	d.Durable = ctx.Bool("du")
-	d.Autodelete = ctx.Bool("ad")
+	d.Durable = ctx.Bool("durable")
+	d.Autodelete = ctx.Bool("autodelete")
 	d.Kind = ctx.String("type")
 	d.ExchangeName = ctx.Args().First()
 

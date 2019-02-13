@@ -16,5 +16,5 @@ func (v version) string() string {
 var rmqctlVersion = version{
 	major: 1,
 	minor: 0,
-	patch: 8,
+	patch: 9,
 }

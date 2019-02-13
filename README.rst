@@ -19,6 +19,7 @@ rmqctl_
 .. _binary release v1.0.3: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.3
 .. _binary release v1.0.7: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.7
 .. _binary release v1.0.8: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.8
+.. _binary release v1.0.9: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.9
 
 .. ;; And now we continue with the actual content
 
@@ -33,6 +34,9 @@ rmqctl is *the* swiss-knife tool for rabbitmq with kubectl like commands.
 
 Binary Release:
 ---------------
+
+`binary release v1.0.9`_
+ - honors -a, -d in create queue/exchange
 
 `binary release v1.0.8`_
  - Now supports TLS connection for AMQP and HTTPS
