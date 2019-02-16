@@ -20,6 +20,7 @@ rmqctl_
 .. _binary release v1.0.7: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.7
 .. _binary release v1.0.8: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.8
 .. _binary release v1.0.9: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.9
+.. _binary release v1.0.10: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.10
 
 .. ;; And now we continue with the actual content
 
@@ -35,6 +36,10 @@ rmqctl is *the* swiss-knife tool for rabbitmq with kubectl like commands.
 Binary Release:
 ---------------
 
+`binary release v1.0.10`_
+ - Purge queue / purge queue with prompt [y/n]
+ - Consume queue with numbers, e.g only consumes 10 messages
+
 `binary release v1.0.9`_
  - honors -a, -d in create queue/exchange
 
@@ -43,7 +48,6 @@ Binary Release:
  - New 'tls' entry in rmqctl.conf_
  - New flag '-T' indicates using TLS connection.
  - Bug fix.
-
 
 `binary release v1.0.7`_
  - Now supports burst message publish mode.
@@ -183,6 +187,13 @@ Consume
 -------
 - Consume supports ack|nack|reject|auto-ack acknowledge modes.
 - Run as daemon, consume on-demand.
+- Consume number of messages with flag -c NUMBER
+- --help for more features
+
+
+Purge
+-----
+- Purge queue with prompt
 - --help for more features
 
 
@@ -387,14 +398,15 @@ observing queues bounded to the exchange *TEST_EXCHANGE_1* received the message.
 
 Consume message
 ---------------
+Consume 3 messages.
 
 ::
 
-   $ rmqctl consume TEST_QUEUE_1
+   $ rmqctl consume TEST_QUEUE_1 -c 3
    |Message
-   |This is a test message
-   |This is a test message
-   ...
+   This is a test message
+   This is a test message
+   This is a test message
 
 
 
@@ -405,9 +417,19 @@ Consume message in daemon mode
 
    $ rmqctl consume TEST_QUEUE_2 -d
    |Message
-   |This is a test message
-   |This is a test message
+   This is a test message
+   This is a test message
    ...
+
+
+Purge queue
+-----------
+Purge queue without prompt.
+
+::
+
+   $ rmqctl purge TEST_QUEUE_1 -f
+   done
 
 
 
