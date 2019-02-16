@@ -39,6 +39,7 @@ const (
 	updateVhostAction
 	publishAction
 	consumeAction
+	purgeAction
 )
 
 var (
@@ -73,6 +74,7 @@ var (
 		updateVhostAction:    updateVhostJob,
 		publishAction:        publishJob,
 		consumeAction:        consumeJob,
+		purgeAction:          purgeJob,
 	}
 )
 
@@ -171,7 +173,7 @@ func flags(f int) []cli.Flag {
 			},
 			cli.BoolFlag{
 				Name:  "HA",
-				Usage: "HA enabled, creates policy name 'queuename_HA' under vhost -v",
+				Usage: "HA enabled, creates policy name 'queuename_HA' under vhost -V",
 			},
 			cli.StringFlag{
 				Name:  "HAMODE",
@@ -325,6 +327,11 @@ func flags(f int) []cli.Flag {
 				Name:  "daemon,d",
 				Usage: "daemon mode",
 			},
+			cli.IntFlag{
+				Name:  "count,c",
+				Value: 0,
+				Usage: "consume number of messages",
+			},
 			cli.StringFlag{
 				Name:  "acktype,t",
 				Value: "ack",
@@ -356,6 +363,13 @@ func flags(f int) []cli.Flag {
 			cli.BoolFlag{
 				Name:  "trace,t",
 				Usage: "enable vhost tracing",
+			},
+		}
+	case purgeAction:
+		return []cli.Flag{
+			cli.BoolFlag{
+				Name:  "force,f",
+				Usage: "purge queue without prompt",
 			},
 		}
 	default:
@@ -623,6 +637,15 @@ func commands() []cli.Command {
 					After:  doneAfter,
 				},
 			},
+		},
+		{
+			Name:        "purge",
+			Usage:       "purge queue",
+			UsageText:   "rmqctl [global options] purge QUEUE_NAME [purge options]",
+			Description: "rmqctl -V vhost purge QUEUE_NAME -f",
+			Flags:       flags(purgeAction),
+			Action:      actions(purgeAction),
+			After:       doneAfter,
 		},
 	}
 

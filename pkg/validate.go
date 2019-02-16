@@ -403,6 +403,7 @@ func validateConsume(ctx *cli.Context, d *consumeType) error {
 	d.NoWait = ctx.Bool("nw")
 	d.Daemon = ctx.Bool("daemon")
 	d.Formatter = ctx.String("o")
+	d.Count = ctx.Int("count")
 
 	return validates(d)
 }
@@ -430,6 +431,19 @@ func validateUpdateVhost(ctx *cli.Context, d *updateVhostType) error {
 	d.amqpConnectionType = amqpData
 	d.VhostName = ctx.Args().First()
 	d.Tracing = ctx.Bool("trace")
+
+	return validates(d)
+}
+
+func validatePurge(ctx *cli.Context, d *purgeType) error {
+	amqpData, err := validateAmqp(ctx)
+	if err != nil {
+		return err
+	}
+
+	d.amqpConnectionType = amqpData
+	d.Force = ctx.Bool("force")
+	d.QueueName = ctx.Args().First()
 
 	return validates(d)
 }

@@ -1,10 +1,13 @@
 package pkg
 
 import (
+	"bufio"
 	"crypto/tls"
 	"fmt"
 	"net/http"
 	"net/url"
+	"os"
+	"strings"
 	"time"
 
 	rh "github.com/michaelklishin/rabbit-hole"
@@ -772,4 +775,68 @@ func updateVhost(conn *rh.Client, data *updateVhostType) error {
 	}
 
 	return nil
+}
+
+func purgeQueue(conn *rh.Client, data *purgeType) error {
+	// check vhost existence.
+	_, err := conn.GetVhost(data.Vhost)
+	if err != nil {
+		logger.Debug(
+			"vhost doesn't exist",
+			zap.String("service", "api"),
+			zap.String("vhost", data.Vhost),
+		)
+
+		return cli.NewExitError(err.Error(), 1)
+	}
+
+	if !data.Force && !confirm(fmt.Sprintf("Purge queue %s?", data.QueueName)) {
+		fmt.Println("Nothing purged")
+		return nil
+	}
+
+	res, err := conn.PurgeQueue(data.Vhost, data.QueueName)
+
+	if err := handleHTTPResponse(res, "purge", "queue"); err != nil {
+		return err
+	}
+
+	if err != nil {
+		logger.Debug(
+			"purge queue failed",
+			zap.String("service", "api"),
+			zap.String("vhost", data.Vhost),
+			zap.String("queue", data.QueueName),
+		)
+
+		return cli.NewExitError(err.Error(), 1)
+	}
+
+	return nil
+}
+
+func confirm(s string) bool {
+	reader := bufio.NewReader(os.Stdin)
+
+	for {
+		fmt.Printf("%s [y/n]: ", s)
+
+		response, err := reader.ReadString('\n')
+		if err != nil {
+			logger.Fatal(
+				"user input error",
+				zap.String("service", "api"),
+			)
+
+			return false
+		}
+
+		response = strings.ToLower(strings.TrimSpace(response))
+
+		if response == "y" || response == "yes" {
+			return true
+		} else if response == "n" || response == "no" {
+			return false
+		}
+	}
 }

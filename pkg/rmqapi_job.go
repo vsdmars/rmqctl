@@ -303,3 +303,18 @@ func updateVhostJob(ctx *cli.Context) error {
 
 	return updateVhost(conn, &data)
 }
+
+func purgeJob(ctx *cli.Context) error {
+	data := purgeType{}
+
+	if err := validatePurge(ctx, &data); err != nil {
+		return err
+	}
+
+	conn, err := connectAPI(&data.amqpConnectionType)
+	if err != nil {
+		return err
+	}
+
+	return purgeQueue(conn, &data)
+}

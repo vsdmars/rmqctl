@@ -155,6 +155,7 @@ type (
 		NoWait    bool       `validate:"-"`
 		Daemon    bool       `validate:"-"`
 		Formatter string     `validate:"oneof=json plain"`
+		Count     int        `validate:"min=0"`
 		Args      amqp.Table `validate:"-"`
 	}
 
@@ -169,6 +170,12 @@ type (
 		amqpConnectionType
 		VhostName string `validate:"required"`
 		Tracing   bool   `validate:"-"`
+	}
+
+	purgeType struct {
+		amqpConnectionType
+		QueueName string `validate:"required"`
+		Force     bool   `validate:"-"`
 	}
 )
 

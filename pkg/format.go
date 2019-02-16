@@ -586,6 +586,24 @@ func daemonConsumeF(channel *amqp.Channel, data *consumeType) error {
 }
 
 func noneDaemonConsumeF(channel *amqp.Channel, data *consumeType) error {
+	testCnt := func() <-chan struct{} {
+		ch := make(chan struct{}, data.Count)
+
+		go func() {
+			if data.Count == 0 {
+				for {
+					ch <- struct{}{}
+				}
+			} else {
+				for i := 0; i < data.Count; i++ {
+					ch <- struct{}{}
+				}
+				close(ch)
+			}
+		}()
+
+		return ch
+	}
 
 	F := func() error {
 		var w *tabwriter.Writer
@@ -598,7 +616,7 @@ func noneDaemonConsumeF(channel *amqp.Channel, data *consumeType) error {
 			fmt.Fprintf(w, "|%v\n", "Message")
 		}
 
-		for {
+		for range testCnt() {
 			d, ok, err := channel.Get(
 				data.QueueName,
 				data.AutoAck,
@@ -608,7 +626,7 @@ func noneDaemonConsumeF(channel *amqp.Channel, data *consumeType) error {
 				ackFunction(&d, data)
 
 				if data.Formatter == "plain" {
-					fmt.Fprintf(w, "|%v\n", string(d.Body))
+					fmt.Fprintf(w, "%v\n", string(d.Body))
 				} else {
 					b, err := json.MarshalIndent(d, "", "  ")
 					if err != nil {
@@ -631,9 +649,12 @@ func noneDaemonConsumeF(channel *amqp.Channel, data *consumeType) error {
 
 					return cli.NewExitError(err.Error(), 1)
 				}
-				return nil
+
+				break
 			}
 		}
+
+		return nil
 	}
 
 	return F()
