@@ -28,7 +28,7 @@ rmqctl_
 
 ----
 
-rmqctl is *the* swiss-knife tool for rabbitmq with kubectl like commands.
+rmqctl is *the* swiss-army knife tool for rabbitmq with kubectl like commands.
 
 ----
 
