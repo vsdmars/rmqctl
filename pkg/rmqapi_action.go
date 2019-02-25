@@ -126,11 +126,6 @@ func createQueue(conn *rh.Client, data *createQueueType) error {
 		data.QueueName,
 		setting,
 	)
-
-	if err := handleHTTPResponse(res, "create", "queue"); err != nil {
-		return err
-	}
-
 	if err != nil {
 		logger.Debug(
 			"create queue failed",
@@ -140,6 +135,10 @@ func createQueue(conn *rh.Client, data *createQueueType) error {
 		)
 
 		return cli.NewExitError(err.Error(), 1)
+	}
+
+	if err := handleHTTPResponse(res, "create", "queue"); err != nil {
+		return err
 	}
 
 	if data.Ha {
@@ -177,11 +176,6 @@ func createQueueHA(conn *rh.Client, data *createQueueType) error {
 		fmt.Sprintf("%s_%s", data.QueueName, "HA"),
 		policy,
 	)
-
-	if err := handleHTTPResponse(res, "create", "policy"); err != nil {
-		return err
-	}
-
 	if err != nil {
 		logger.Debug(
 			"set queue HA policy failed",
@@ -195,6 +189,10 @@ func createQueueHA(conn *rh.Client, data *createQueueType) error {
 		)
 
 		return cli.NewExitError(err.Error(), 1)
+	}
+
+	if err := handleHTTPResponse(res, "create", "policy"); err != nil {
+		return err
 	}
 
 	return nil
@@ -212,11 +210,6 @@ func createExchange(conn *rh.Client, data *createExchangeType) error {
 		data.ExchangeName,
 		setting,
 	)
-
-	if err := handleHTTPResponse(res, "create", "exchange"); err != nil {
-		return err
-	}
-
 	if err != nil {
 		logger.Debug(
 			"create exchange failed",
@@ -226,6 +219,10 @@ func createExchange(conn *rh.Client, data *createExchangeType) error {
 		)
 
 		return cli.NewExitError(err.Error(), 1)
+	}
+
+	if err := handleHTTPResponse(res, "create", "exchange"); err != nil {
+		return err
 	}
 
 	return nil
@@ -244,11 +241,6 @@ func createBind(conn *rh.Client, data *createBindType) error {
 		data.Vhost,
 		setting,
 	)
-
-	if err := handleHTTPResponse(res, "create", "bind"); err != nil {
-		return err
-	}
-
 	if err != nil {
 		logger.Debug(
 			"create bind failed",
@@ -261,6 +253,10 @@ func createBind(conn *rh.Client, data *createBindType) error {
 		)
 
 		return cli.NewExitError(err.Error(), 1)
+	}
+
+	if err := handleHTTPResponse(res, "create", "bind"); err != nil {
+		return err
 	}
 
 	return nil
@@ -286,11 +282,6 @@ func createUser(conn *rh.Client, data *createUserType) error {
 		Password: data.RmqPassword}
 
 	res, err := conn.PutUser(data.RmqUsername, setting)
-
-	if err := handleHTTPResponse(res, "create", "user"); err != nil {
-		return err
-	}
-
 	if err != nil {
 		logger.Debug(
 			"create user failed",
@@ -300,6 +291,10 @@ func createUser(conn *rh.Client, data *createUserType) error {
 		)
 
 		return cli.NewExitError(err.Error(), 1)
+	}
+
+	if err := handleHTTPResponse(res, "create", "user"); err != nil {
+		return err
 	}
 
 	return nil
@@ -323,11 +318,6 @@ func createVhost(conn *rh.Client, data *createVhostType) error {
 		Tracing: data.Tracing}
 
 	res, err := conn.PutVhost(data.VhostName, setting)
-
-	if err := handleHTTPResponse(res, "create", "vhost"); err != nil {
-		return err
-	}
-
 	if err != nil {
 		logger.Debug(
 			"create vhost failed",
@@ -337,6 +327,10 @@ func createVhost(conn *rh.Client, data *createVhostType) error {
 		)
 
 		return cli.NewExitError(err.Error(), 1)
+	}
+
+	if err := handleHTTPResponse(res, "create", "vhost"); err != nil {
+		return err
 	}
 
 	return nil
@@ -569,11 +563,6 @@ func deleteQueue(conn *rh.Client, data *deleteQueueType) error {
 		data.Vhost,
 		data.QueueName,
 	)
-
-	if err := handleHTTPResponse(res, "delete", "queue"); err != nil {
-		return err
-	}
-
 	if err != nil {
 		logger.Debug(
 			"delete queue failed",
@@ -585,6 +574,10 @@ func deleteQueue(conn *rh.Client, data *deleteQueueType) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
+	if err := handleHTTPResponse(res, "delete", "queue"); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -593,11 +586,6 @@ func deleteExchange(conn *rh.Client, data *deleteExchangeType) error {
 		data.Vhost,
 		data.ExchangeName,
 	)
-
-	if err := handleHTTPResponse(res, "delete", "exchange"); err != nil {
-		return err
-	}
-
 	if err != nil {
 		logger.Debug(
 			"delete exchange failed",
@@ -607,6 +595,10 @@ func deleteExchange(conn *rh.Client, data *deleteExchangeType) error {
 		)
 
 		return cli.NewExitError(err.Error(), 1)
+	}
+
+	if err := handleHTTPResponse(res, "delete", "exchange"); err != nil {
+		return err
 	}
 
 	return nil
@@ -625,11 +617,6 @@ func deleteBind(conn *rh.Client, data *deleteBindType) error {
 		data.Vhost,
 		setting,
 	)
-
-	if err := handleHTTPResponse(res, "delete", "bind"); err != nil {
-		return err
-	}
-
 	if err != nil {
 		logger.Debug(
 			"delete bind failed",
@@ -642,6 +629,10 @@ func deleteBind(conn *rh.Client, data *deleteBindType) error {
 		)
 
 		return cli.NewExitError(err.Error(), 1)
+	}
+
+	if err := handleHTTPResponse(res, "delete", "bind"); err != nil {
+		return err
 	}
 
 	return nil
@@ -665,11 +656,6 @@ func deletePolicy(conn *rh.Client, data *deletePolicyType) error {
 
 func deleteUser(conn *rh.Client, data *deleteUserType) error {
 	res, err := conn.DeleteUser(data.RmqUsername)
-
-	if err := handleHTTPResponse(res, "delete", "user"); err != nil {
-		return err
-	}
-
 	if err != nil {
 		logger.Debug(
 			"delete user failed",
@@ -680,16 +666,15 @@ func deleteUser(conn *rh.Client, data *deleteUserType) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
+	if err := handleHTTPResponse(res, "delete", "user"); err != nil {
+		return err
+	}
+
 	return nil
 }
 
 func deleteVhost(conn *rh.Client, data *deleteVhostType) error {
 	res, err := conn.DeleteVhost(data.VhostName)
-
-	if err := handleHTTPResponse(res, "delete", "vhost"); err != nil {
-		return err
-	}
-
 	if err != nil {
 		logger.Debug(
 			"delete vhost failed",
@@ -698,6 +683,10 @@ func deleteVhost(conn *rh.Client, data *deleteVhostType) error {
 		)
 
 		return cli.NewExitError(err.Error(), 1)
+	}
+
+	if err := handleHTTPResponse(res, "delete", "vhost"); err != nil {
+		return err
 	}
 
 	return nil
@@ -722,11 +711,6 @@ func updateUser(conn *rh.Client, data *updateUserType) error {
 		Password: data.RmqPassword}
 
 	res, err := conn.PutUser(data.RmqUsername, setting)
-
-	if err := handleHTTPResponse(res, "update", "user"); err != nil {
-		return err
-	}
-
 	if err != nil {
 		logger.Debug(
 			"update user failed",
@@ -736,6 +720,10 @@ func updateUser(conn *rh.Client, data *updateUserType) error {
 		)
 
 		return cli.NewExitError(err.Error(), 1)
+	}
+
+	if err := handleHTTPResponse(res, "update", "user"); err != nil {
+		return err
 	}
 
 	return nil
@@ -758,11 +746,6 @@ func updateVhost(conn *rh.Client, data *updateVhostType) error {
 		Tracing: data.Tracing}
 
 	res, err := conn.PutVhost(data.VhostName, setting)
-
-	if err := handleHTTPResponse(res, "delete", "vhost"); err != nil {
-		return err
-	}
-
 	if err != nil {
 		logger.Debug(
 			"create vhost failed",
@@ -772,6 +755,10 @@ func updateVhost(conn *rh.Client, data *updateVhostType) error {
 		)
 
 		return cli.NewExitError(err.Error(), 1)
+	}
+
+	if err := handleHTTPResponse(res, "update", "vhost"); err != nil {
+		return err
 	}
 
 	return nil
@@ -796,11 +783,6 @@ func purgeQueue(conn *rh.Client, data *purgeType) error {
 	}
 
 	res, err := conn.PurgeQueue(data.Vhost, data.QueueName)
-
-	if err := handleHTTPResponse(res, "purge", "queue"); err != nil {
-		return err
-	}
-
 	if err != nil {
 		logger.Debug(
 			"purge queue failed",
@@ -810,6 +792,10 @@ func purgeQueue(conn *rh.Client, data *purgeType) error {
 		)
 
 		return cli.NewExitError(err.Error(), 1)
+	}
+
+	if err := handleHTTPResponse(res, "purge", "queue"); err != nil {
+		return err
 	}
 
 	return nil

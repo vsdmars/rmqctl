@@ -13,14 +13,15 @@ rmqctl_
   :target: https://godoc.org/github.com/vsdmars/rmqctl
 .. |license| image:: https://img.shields.io/github/license/mashape/apistatus.svg?style=flat
   :target: ./LICENSE
-.. |release| image:: https://img.shields.io/badge/release-v1.0.10-blue.svg
-  :target: https://github.com/vsdmars/rmqctl/tree/v1.0.10
+.. |release| image:: https://img.shields.io/badge/release-v1.0.11-blue.svg
+  :target: https://github.com/vsdmars/rmqctl/tree/v1.0.11
 .. _binary release v1.0.0: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.0
 .. _binary release v1.0.3: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.3
 .. _binary release v1.0.7: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.7
 .. _binary release v1.0.8: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.8
 .. _binary release v1.0.9: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.9
 .. _binary release v1.0.10: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.10
+.. _binary release v1.0.11: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.11
 
 .. ;; And now we continue with the actual content
 
@@ -35,6 +36,9 @@ rmqctl is *the* swiss-army knife tool for rabbitmq with kubectl like commands.
 
 Binary Release:
 ---------------
+
+`binary release v1.0.11`_
+ - Bug fix
 
 `binary release v1.0.10`_
  - Purge queue / purge queue with prompt [y/n]
