@@ -191,11 +191,7 @@ func createQueueHA(conn *rh.Client, data *createQueueType) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	if err := handleHTTPResponse(res, "create", "policy"); err != nil {
-		return err
-	}
-
-	return nil
+	return handleHTTPResponse(res, "create", "policy")
 }
 
 func createExchange(conn *rh.Client, data *createExchangeType) error {
@@ -221,11 +217,7 @@ func createExchange(conn *rh.Client, data *createExchangeType) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	if err := handleHTTPResponse(res, "create", "exchange"); err != nil {
-		return err
-	}
-
-	return nil
+	return handleHTTPResponse(res, "create", "exchange")
 }
 
 func createBind(conn *rh.Client, data *createBindType) error {
@@ -255,11 +247,7 @@ func createBind(conn *rh.Client, data *createBindType) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	if err := handleHTTPResponse(res, "create", "bind"); err != nil {
-		return err
-	}
-
-	return nil
+	return handleHTTPResponse(res, "create", "bind")
 }
 
 func createUser(conn *rh.Client, data *createUserType) error {
@@ -293,11 +281,7 @@ func createUser(conn *rh.Client, data *createUserType) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	if err := handleHTTPResponse(res, "create", "user"); err != nil {
-		return err
-	}
-
-	return nil
+	return handleHTTPResponse(res, "create", "user")
 }
 
 func createVhost(conn *rh.Client, data *createVhostType) error {
@@ -329,11 +313,7 @@ func createVhost(conn *rh.Client, data *createVhostType) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	if err := handleHTTPResponse(res, "create", "vhost"); err != nil {
-		return err
-	}
-
-	return nil
+	return handleHTTPResponse(res, "create", "vhost")
 }
 
 func listQueue(conn *rh.Client, data *listQueueType) error {
@@ -574,11 +554,7 @@ func deleteQueue(conn *rh.Client, data *deleteQueueType) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	if err := handleHTTPResponse(res, "delete", "queue"); err != nil {
-		return err
-	}
-
-	return nil
+	return handleHTTPResponse(res, "delete", "queue")
 }
 
 func deleteExchange(conn *rh.Client, data *deleteExchangeType) error {
@@ -597,11 +573,7 @@ func deleteExchange(conn *rh.Client, data *deleteExchangeType) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	if err := handleHTTPResponse(res, "delete", "exchange"); err != nil {
-		return err
-	}
-
-	return nil
+	return handleHTTPResponse(res, "delete", "exchange")
 }
 
 func deleteBind(conn *rh.Client, data *deleteBindType) error {
@@ -633,11 +605,7 @@ func deleteBind(conn *rh.Client, data *deleteBindType) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	if err := handleHTTPResponse(res, "delete", "bind"); err != nil {
-		return err
-	}
-
-	return nil
+	return handleHTTPResponse(res, "delete", "bind")
 }
 
 func deletePolicy(conn *rh.Client, data *deletePolicyType) error {
@@ -668,11 +636,7 @@ func deleteUser(conn *rh.Client, data *deleteUserType) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	if err := handleHTTPResponse(res, "delete", "user"); err != nil {
-		return err
-	}
-
-	return nil
+	return handleHTTPResponse(res, "delete", "user")
 }
 
 func deleteVhost(conn *rh.Client, data *deleteVhostType) error {
@@ -687,11 +651,7 @@ func deleteVhost(conn *rh.Client, data *deleteVhostType) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	if err := handleHTTPResponse(res, "delete", "vhost"); err != nil {
-		return err
-	}
-
-	return nil
+	return handleHTTPResponse(res, "delete", "vhost")
 }
 
 func updateUser(conn *rh.Client, data *updateUserType) error {
@@ -724,11 +684,7 @@ func updateUser(conn *rh.Client, data *updateUserType) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	if err := handleHTTPResponse(res, "update", "user"); err != nil {
-		return err
-	}
-
-	return nil
+	return handleHTTPResponse(res, "update", "user")
 }
 
 func updateVhost(conn *rh.Client, data *updateVhostType) error {
@@ -759,11 +715,7 @@ func updateVhost(conn *rh.Client, data *updateVhostType) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	if err := handleHTTPResponse(res, "update", "vhost"); err != nil {
-		return err
-	}
-
-	return nil
+	return handleHTTPResponse(res, "update", "vhost")
 }
 
 func purgeQueue(conn *rh.Client, data *purgeType) error {
@@ -796,11 +748,7 @@ func purgeQueue(conn *rh.Client, data *purgeType) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	if err := handleHTTPResponse(res, "purge", "queue"); err != nil {
-		return err
-	}
-
-	return nil
+	return handleHTTPResponse(res, "purge", "queue")
 }
 
 func confirm(s string) bool {
