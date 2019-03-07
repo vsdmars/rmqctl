@@ -14,7 +14,7 @@ rmqctl_
 .. |license| image:: https://img.shields.io/github/license/mashape/apistatus.svg?style=flat
   :target: ./LICENSE
 .. |release| image:: https://img.shields.io/badge/release-v1.0.12-blue.svg
-  :target: https://github.com/vsdmars/rmqctl/tree/v1.0.11
+  :target: https://github.com/vsdmars/rmqctl/tree/v1.0.12
 .. _binary release v1.0.0: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.0
 .. _binary release v1.0.3: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.3
 .. _binary release v1.0.7: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.7
@@ -44,9 +44,10 @@ Binary Release:
  instead of BindingInfo.RoutingKey
 
  - reference:
+      https://github.com/michaelklishin/rabbit-hole/blob/master/bindings.go#L193
       https://cdn.rawgit.com/rabbitmq/rabbitmq-management/v3.7.12/priv/www/api/index.html
       /api/bindings/vhost/e/exchange/q/queue/props
-      https://github.com/michaelklishin/rabbit-hole/blob/master/bindings.go#L193
+
 
 `binary release v1.0.11`_
  - Logging bug fix
