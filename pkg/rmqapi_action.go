@@ -611,6 +611,7 @@ func deleteBind(conn *rh.Client, data *deleteBindType) error {
 		Destination:     data.DestinationName,
 		DestinationType: data.Type,
 		RoutingKey:      data.Key,
+		PropertiesKey:   data.Key,
 	}
 
 	res, err := conn.DeleteBinding(
@@ -624,6 +625,7 @@ func deleteBind(conn *rh.Client, data *deleteBindType) error {
 			zap.String("source", data.SourceExchangeName),
 			zap.String("destination", data.DestinationName),
 			zap.String("routing key", data.Key),
+			zap.String("properties key", data.Key),
 			zap.String("type", data.Type),
 			zap.String("vhost", data.Vhost),
 		)
