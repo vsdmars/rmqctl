@@ -561,7 +561,7 @@ func daemonConsumeF(channel *amqp.Channel, data *consumeType) error {
 			ackFunction(&d, data)
 
 			if data.Formatter == "plain" {
-				fmt.Fprintf(w, "|%v\n", string(d.Body))
+				fmt.Fprintf(w, " %v\n", string(d.Body))
 			} else {
 				b, err := json.MarshalIndent(d, "", "  ")
 				if err != nil {
@@ -626,7 +626,7 @@ func noneDaemonConsumeF(channel *amqp.Channel, data *consumeType) error {
 				ackFunction(&d, data)
 
 				if data.Formatter == "plain" {
-					fmt.Fprintf(w, "%v\n", string(d.Body))
+					fmt.Fprintf(w, " %v\n", string(d.Body))
 				} else {
 					b, err := json.MarshalIndent(d, "", "  ")
 					if err != nil {
