@@ -13,8 +13,8 @@ rmqctl_
   :target: https://godoc.org/github.com/vsdmars/rmqctl
 .. |license| image:: https://img.shields.io/github/license/mashape/apistatus.svg?style=flat
   :target: ./LICENSE
-.. |release| image:: https://img.shields.io/badge/release-v1.0.12-blue.svg
-  :target: https://github.com/vsdmars/rmqctl/tree/v1.0.12
+.. |release| image:: https://img.shields.io/badge/release-v1.0.14-blue.svg
+  :target: https://github.com/vsdmars/rmqctl/tree/v1.0.14
 .. _binary release v1.0.0: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.0
 .. _binary release v1.0.3: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.3
 .. _binary release v1.0.7: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.7
@@ -23,6 +23,7 @@ rmqctl_
 .. _binary release v1.0.10: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.10
 .. _binary release v1.0.11: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.11
 .. _binary release v1.0.12: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.12
+.. _binary release v1.0.14: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.14
 
 .. ;; And now we continue with the actual content
 
@@ -38,6 +39,12 @@ rmqctl is *the* swiss-army knife tool for rabbitmq with kubectl like commands.
 Binary Release:
 ---------------
 
+`binary release v1.0.14`_
+ - 'rmqctl publish' adds new flag '-e' for user provided executable,
+
+   which generates messages to 'stdout' where rmqctl consumes and publishes to the queue.
+
+
 `binary release v1.0.12`_
  - fix issues for rabbit-hole.DeleteBinding uses BindingInfo.PropertiesKey as routing key
 
@@ -52,18 +59,22 @@ Binary Release:
 `binary release v1.0.11`_
  - Logging bug fix
 
+
 `binary release v1.0.10`_
  - Purge queue / purge queue with prompt [y/n]
  - Consume queue with numbers, e.g only consumes 10 messages
 
+
 `binary release v1.0.9`_
  - honors -a, -d in create queue/exchange
+
 
 `binary release v1.0.8`_
  - Now supports TLS connection for AMQP and HTTPS
  - New 'tls' entry in rmqctl.conf_
  - New flag '-T' indicates using TLS connection.
  - Bug fix.
+
 
 `binary release v1.0.7`_
  - Now supports burst message publish mode.
@@ -194,7 +205,8 @@ Update
 Publish
 -------
 - Publish with routing key
-- Burst publishing
+- Publish messages generated from user provided executable
+- Burst publishing (testing throughput)
 - Supports transient|persistent modes
 - --help for more features
 
@@ -412,6 +424,28 @@ observing queues bounded to the exchange *TEST_EXCHANGE_1* received the message.
    |TEST_QUEUE_3 |/     |true    |true       |rabbit@r1  |       |0         |TEST_QUEUE_3_HA |0
 
 
+Publish message from user provided executable
+---------------------------------------------
+
+Publish messages generated from user provided executable to the queue.
+
+::
+
+   $ rmqctl publish TEST_EXCHANGE_1 RUN -e /usr/bin/ls
+   done
+
+   $ rmqctl consume TEST_QUEUE_1
+   |Message
+    Desktop
+    Documents
+    Downloads
+    Music
+    Pictures
+    Public
+    Templates
+    Videos
+
+
 Consume message
 ---------------
 Consume 3 messages.
@@ -462,4 +496,4 @@ Contact
 -------
 Bug, feature requests, welcome to shoot me an email at:
 
-**vsdmars<at>gmail.com**
+**vsdmars<<at>>gmail.com**
