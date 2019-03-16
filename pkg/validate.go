@@ -1,6 +1,7 @@
 package pkg
 
 import (
+	"os/exec"
 	"strconv"
 
 	"go.uber.org/zap"
@@ -107,6 +108,7 @@ func validateCreateQueue(ctx *cli.Context, d *createQueueType) error {
 					"validation error, 'exactly' HA mode should have interger parameter",
 					zap.String("HA MODE", d.HaMode),
 					zap.String("HA Param", d.HaParam),
+					zap.String("error", err.Error()),
 				)
 
 				return cli.NewExitError("command error, use --help to see the proper usage.", 1)
@@ -372,13 +374,58 @@ func validatePublish(ctx *cli.Context, d *publishType) error {
 	d.amqpConnectionType = amqpData
 	d.Immediate = ctx.Bool("immediate")
 	d.Mandatory = ctx.Bool("mandatory")
-	d.ExchangeName = ctx.Args().First()
 	d.Burst = ctx.Int("burst")
+	d.Executable = ctx.String("execute")
+
+	d.ExchangeName = ctx.Args().First()
 	d.Key = ctx.Args().Get(1)
 	d.Message = ctx.Args().Get(2)
 
-	mode := ctx.String("mode")
+	if len(d.Executable) != 0 && d.Burst > 1 {
+		logger.Debug(
+			"validation error, provided both executable and burst value > 1",
+			zap.Int("burst", d.Burst),
+			zap.String("executable", d.Executable),
+		)
 
+		return cli.NewExitError("command error, use --help to see the proper usage.", 1)
+
+	}
+
+	if len(d.Executable) != 0 && len(d.Message) != 0 {
+		logger.Debug(
+			"validation error, provided both executable and message",
+			zap.String("message", d.Message),
+			zap.String("executable", d.Executable),
+		)
+
+		return cli.NewExitError("command error, use --help to see the proper usage.", 1)
+	}
+
+	if len(d.Message) == 0 && len(d.Executable) == 0 {
+		logger.Debug(
+			"validation error, provided neither executable nor message",
+			zap.String("message", d.Message),
+			zap.String("executable", d.Executable),
+		)
+
+		return cli.NewExitError("command error, use --help to see the proper usage.", 1)
+	}
+
+	if len(d.Executable) != 0 {
+		_, err := exec.LookPath(d.Executable)
+		if err != nil {
+			logger.Debug(
+				"validation error, executable doesn't exist (use ./executable if it's a local file)",
+				zap.String("executable", d.Executable),
+				zap.String("error", err.Error()),
+			)
+
+			return cli.NewExitError("command error, use --help to see the proper usage.", 1)
+		}
+	}
+
+	mode := ctx.String("mode")
 	if mode == "transient" {
 		d.Mode = 0
 	} else if mode == "persistent" {

@@ -1,6 +1,7 @@
 package pkg
 
 import (
+	"context"
 	"os"
 	"path"
 	"syscall"
@@ -47,6 +48,8 @@ var (
 		currentDir, _ := os.Getwd()
 		return path.Join(currentDir, configYaml)
 	}()
+
+	ctx, cancel = context.WithCancel(context.Background())
 )
 
 var (
@@ -320,6 +323,9 @@ func flags(f int) []cli.Flag {
 				Name:  "immediate,i",
 				Usage: "if no consumers on the matched queue, delivery fails",
 			},
+			cli.StringFlag{
+				Name:  "execute,e",
+				Usage: "executable file"},
 		}
 	case consumeAction:
 		return []cli.Flag{
@@ -378,7 +384,7 @@ func flags(f int) []cli.Flag {
 }
 
 func commands() []cli.Command {
-	cmds := []cli.Command{
+	return []cli.Command{
 		{
 			Name:        "create",
 			Usage:       "create resource",
@@ -591,9 +597,9 @@ func commands() []cli.Command {
 		},
 		{
 			Name:        "publish",
-			Usage:       "rmqctl [global options] publish [publish options] EXCHANGE_NAME KEY MESSAGE",
-			UsageText:   "publish exchange key message",
-			Description: "rmqctl publish EXCHANGE_NAME KEY MESSAGE",
+			Usage:       "rmqctl [global options] publish [publish options] EXCHANGE_NAME KEY [MESSAGE/EXECUTABLE GENERATED MESSAGE]",
+			UsageText:   "publish exchange key [message/executable generated message], burst has no effect when executable is set",
+			Description: "rmqctl publish EXCHANGE_NAME KEY [MESSAGE/EXECUTABLE GENERATED MESSAGE]",
 			Category:    "publish",
 			Flags:       flags(publishAction),
 			Action:      actions(publishAction),
@@ -648,32 +654,25 @@ func commands() []cli.Command {
 			After:       doneAfter,
 		},
 	}
-
-	return cmds
 }
 
 // Cmd starts the application.
 func Cmd() error {
 	defer logCleanUp()
 
-	regSignalHandler(
-		func() {
-			os.Exit(128 + int(syscall.SIGQUIT))
-		},
-		syscall.SIGQUIT,
-	)
+	quitSig := func() {
+		cancel()
+	}
 
-	regSignalHandler(
-		func() {
-			os.Exit(128 + int(syscall.SIGTERM))
-		},
-		syscall.SIGTERM,
-	)
+	// register signal dispositions
+	registerHandler(syscall.SIGQUIT, quitSig)
+	registerHandler(syscall.SIGTERM, quitSig)
+	registerHandler(syscall.SIGINT, quitSig)
 
 	cliapp := cli.NewApp()
 	cliapp.Authors = []cli.Author{
 		{
-			Name:  "shuo-huan chang/verbalsaint",
+			Name:  "shuo-huan chang",
 			Email: "vsdmars@gmail.com",
 		},
 	}
@@ -685,17 +684,17 @@ func Cmd() error {
 	cliapp.Description = "rmqctl is a swiss-knife for rabbitmq cluster."
 	cliapp.Version = rmqctlVersion.string()
 
-	flags := flags(generalAction)
-	commands := commands()
-	cliapp.Before = mainBefore(flags)
-	cliapp.Flags = flags
-	cliapp.Commands = commands
+	gflags := flags(generalAction)
+	cliapp.Before = mainBefore(gflags)
+	cliapp.Flags = gflags
+	cliapp.Commands = commands()
 
 	if err := cliapp.Run(os.Args); err != nil {
 		logger.Debug("encountered error",
 			zap.String("application", "rmqctl"),
 			zap.String("version", cliapp.Version),
 			zap.String("error", err.Error()))
+
 		return err
 	}
 

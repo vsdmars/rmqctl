@@ -1,10 +1,14 @@
 package pkg
 
 import (
+	"bufio"
 	"crypto/tls"
 	"fmt"
+	"io"
 	"net"
+	"os/exec"
 	"runtime"
+	"syscall"
 	"time"
 
 	"github.com/streadway/amqp"
@@ -133,11 +137,51 @@ func connect(amqpconn *amqpConnectionType) (*amqp.Connection, error) {
 	return connection, nil
 }
 
+func runExecutable(payload chan<- amqp.Publishing, data *publishType) {
+	pr, pw := io.Pipe()
+	scanner := bufio.NewScanner(pr)
+
+	go func() {
+		defer cancel()
+
+		cmd := exec.CommandContext(ctx, data.Executable)
+		cmd.Stdout = pw
+
+		go func() {
+			<-ctx.Done()
+			pr.Close()
+			pw.Close()
+			cmd.Process.Signal(syscall.SIGTERM)
+			// don't call cmd.Process.Release() due to cmd.Run() calls
+			// Wait()
+		}()
+
+		if err := cmd.Run(); err != nil {
+			logger.Debug(
+				"Executable run error",
+				zap.String("service", "amqp"),
+				zap.String("error", err.Error()),
+			)
+		}
+	}()
+
+	for scanner.Scan() {
+		b := scanner.Bytes()
+
+		// beware that scanner.Bytes() will override underlying array
+		payload <- amqp.Publishing{
+			ContentType:  "text/plain",
+			Body:         append(b[:0:0], b...),
+			DeliveryMode: data.Mode,
+			MessageId:    "!42!",
+		}
+	}
+}
+
 func burstPublish(
 	gcount int,
 	channel *amqp.Channel,
-	consume <-chan struct{},
-	payload amqp.Publishing,
+	payload <-chan amqp.Publishing,
 	data *publishType) chan string {
 
 	status := make(chan string)
@@ -147,15 +191,16 @@ func burstPublish(
 			close(status)
 		}()
 
-		for range consume {
+		for p := range payload {
 			channel.Publish(
 				data.ExchangeName,
 				data.Key, // routing key
 				data.Mandatory,
 				data.Immediate,
-				payload,
+				p,
 			)
 		}
+
 		status <- fmt.Sprintf("publish goroutine number: %v done.", gcount)
 	}()
 
@@ -173,7 +218,12 @@ func publishMsg(conn *amqp.Connection, data *publishType) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	gcount := int(float64(runtime.NumCPU()) * float64(0.9))
+	var gcount int
+	if len(data.Executable) != 0 {
+		gcount = 1
+	} else {
+		gcount = int(float64(runtime.NumCPU()) * float64(0.9))
+	}
 
 	logger.Debug(
 		"publish using number of goroutines",
@@ -181,46 +231,53 @@ func publishMsg(conn *amqp.Connection, data *publishType) error {
 		zap.Int("goroutines", gcount),
 	)
 
-	consumeChannel := make(chan struct{}, 100)
+	payload := make(chan amqp.Publishing, 1000)
+
+	go func() {
+		defer close(payload)
+
+		if len(data.Executable) != 0 {
+			runExecutable(payload, data)
+		} else {
+			p := amqp.Publishing{
+				ContentType:  "text/plain",
+				Body:         []byte(data.Message),
+				DeliveryMode: data.Mode,
+				MessageId:    "!42!",
+			}
+
+			for i := 0; i < data.Burst; i++ {
+				select {
+				case <-ctx.Done():
+					return
+				default:
+					payload <- p
+				}
+			}
+		}
+	}()
+
 	var gatherStatus []chan string
-
-	payload := amqp.Publishing{
-		ContentType:  "text/plain",
-		Body:         []byte(data.Message),
-		DeliveryMode: data.Mode,
-		MessageId:    "!42!",
-	}
-
-	// starts goroutines
-	for i := 0; i <= gcount; i++ {
+	for i := 0; i < gcount; i++ {
 		gatherStatus = append(
 			gatherStatus,
 			burstPublish(
 				i,
 				channel,
-				consumeChannel,
 				payload,
 				data),
 		)
 	}
 
-	// burst publish
-	for i := 0; i < data.Burst; i++ {
-		consumeChannel <- struct{}{}
-	}
-
-	close(consumeChannel)
-
-	// reference:
-	// ContextType: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Complete_list_of_MIME_types
+	// ContextType:
+	// https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Complete_list_of_MIME_types
 
 	for _, s := range gatherStatus {
-		for m := range s {
-			logger.Debug(
-				"publish goroutine done",
-				zap.String("message", m),
-			)
-		}
+		m := <-s
+		logger.Debug(
+			"publish goroutine done",
+			zap.String("message", m),
+		)
 	}
 
 	logger.Debug(
@@ -244,6 +301,11 @@ func consumeMsg(conn *amqp.Connection, data *consumeType) error {
 
 		return cli.NewExitError(err.Error(), 1)
 	}
+
+	go func() {
+		<-ctx.Done()
+		conn.Close()
+	}()
 
 	if data.Daemon {
 		return daemonConsumeF(channel, data)

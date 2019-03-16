@@ -5,34 +5,31 @@ import (
 	"os/signal"
 )
 
-type (
-	cancelChan chan struct{}
-)
+type handleSlice []func()
 
-var (
-	// key: signal name, value: channel
-	registered = make(map[string]cancelChan)
-)
+var handleMap = make(map[string]handleSlice)
 
-func regSignalHandler(handler func(), sig os.Signal) {
+// registerHandler registers signal disposition
+// Not a concurrent safe function
+func registerHandler(
+	sig os.Signal,
+	handler ...func()) {
 
-	if cancel, ok := registered[sig.String()]; ok {
-		close(cancel)
+	if hslice, ok := handleMap[sig.String()]; ok {
+		handleMap[sig.String()] = append(hslice, handler...)
+		return
 	}
-
-	cancelchan := make(cancelChan)
-	registered[sig.String()] = cancelchan
 
 	sigchan := make(chan os.Signal)
 	signal.Notify(sigchan, sig)
+	handleMap[sig.String()] = append(handleSlice{}, handler...)
 
 	go func() {
 		for {
-			select {
-			case <-cancelchan:
-				return
-			case <-sigchan:
-				handler()
+			<-sigchan
+
+			for _, h := range handleMap[sig.String()] {
+				go h()
 			}
 		}
 	}()

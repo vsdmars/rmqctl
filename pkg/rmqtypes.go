@@ -144,7 +144,8 @@ type (
 		Mandatory    bool   `validate:"-"`
 		Immediate    bool   `validate:"-"`
 		Burst        int    `validate:"required"`
-		Message      string `validate:"required"`
+		Message      string `validate:"omitempty"`
+		Executable   string `validate:"omitempty,file"`
 	}
 
 	consumeType struct {
