@@ -13,8 +13,8 @@ rmqctl_
   :target: https://godoc.org/github.com/vsdmars/rmqctl
 .. |license| image:: https://img.shields.io/github/license/mashape/apistatus.svg?style=flat
   :target: ./LICENSE
-.. |release| image:: https://img.shields.io/badge/release-v1.0.14-blue.svg
-  :target: https://github.com/vsdmars/rmqctl/tree/v1.0.14
+.. |release| image:: https://img.shields.io/badge/release-v1.0.15-blue.svg
+  :target: https://github.com/vsdmars/rmqctl/tree/v1.0.15
 .. _binary release v1.0.0: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.0
 .. _binary release v1.0.3: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.3
 .. _binary release v1.0.7: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.7
@@ -24,6 +24,7 @@ rmqctl_
 .. _binary release v1.0.11: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.11
 .. _binary release v1.0.12: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.12
 .. _binary release v1.0.14: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.14
+.. _binary release v1.0.15: https://github.com/vsdmars/rmqctl/releases/tag/v1.0.15
 
 .. ;; And now we continue with the actual content
 
@@ -38,6 +39,14 @@ rmqctl is *the* swiss-army knife tool for rabbitmq with kubectl like commands.
 
 Binary Release:
 ---------------
+
+`binary release v1.0.15`_
+ - 'rmqctl publish' now publishes input from STDIN.
+ - 'rmqctl publish' -e flag now takes executable with arguments.
+
+ e.g -e "/usr/bin/ls -al"
+
+
 
 `binary release v1.0.14`_
  - 'rmqctl publish' adds new flag '-e' for user provided executable,
@@ -431,19 +440,40 @@ Publish messages generated from user provided executable to the queue.
 
 ::
 
-   $ rmqctl publish TEST_EXCHANGE_1 RUN -e /usr/bin/ls
+   $ rmqctl publish TEST_EXCHANGE_1 RUN -e "/usr/bin/ls -al"
    done
 
    $ rmqctl consume TEST_QUEUE_1
    |Message
-    Desktop
-    Documents
-    Downloads
-    Music
-    Pictures
-    Public
-    Templates
-    Videos
+    drwxr-xr-x 1 vs   users    1566 Mar 16 13:07 Desktop
+    drwxr-xr-x 1 vs   users       0 Feb 11 21:25 Documents
+    drwxr-xr-x 1 vs   users     616 Mar 17 15:34 Downloads
+    drwxr-xr-x 1 vs   users     322 Feb 13 08:40 .fzf
+
+
+Publish message from STDIN
+--------------------------
+
+Publish messages read from STDIN.
+
+::
+
+   $ rmqctl publish TEST_EXCHANGE_1 RUN
+   hello, rabbitmq!
+   greetings, rabbitmq!
+   done
+
+   $ rmqctl consume TEST_QUEUE_1
+   |Message
+    hello, rabbitmq!
+    greetings, rabbitmq!
+
+   $ rmqctl publish TEST_EXCHANGE_1 RUN  <<< "hi, there!"
+   done
+
+   $ rmqctl consume TEST_QUEUE_1
+   |Message
+    hi, there!
 
 
 Consume message
