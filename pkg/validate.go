@@ -375,45 +375,47 @@ func validatePublish(ctx *cli.Context, d *publishType) error {
 	d.Immediate = ctx.Bool("immediate")
 	d.Mandatory = ctx.Bool("mandatory")
 	d.Burst = ctx.Int("burst")
-	d.Executable = ctx.String("execute")
+	tmpExec := ctx.String("execute")
 
 	d.ExchangeName = ctx.Args().First()
 	d.Key = ctx.Args().Get(1)
 	d.Message = ctx.Args().Get(2)
 
-	if len(d.Executable) != 0 && d.Burst > 1 {
+	if len(tmpExec) != 0 && d.Burst > 1 {
 		logger.Debug(
 			"validation error, provided both executable and burst value > 1",
 			zap.Int("burst", d.Burst),
-			zap.String("executable", d.Executable),
+			zap.String("executable", tmpExec),
 		)
 
 		return cli.NewExitError("command error, use --help to see the proper usage.", 1)
 
 	}
 
-	if len(d.Executable) != 0 && len(d.Message) != 0 {
+	if len(tmpExec) != 0 && len(d.Message) != 0 {
 		logger.Debug(
 			"validation error, provided both executable and message",
 			zap.String("message", d.Message),
-			zap.String("executable", d.Executable),
+			zap.String("executable", tmpExec),
 		)
 
 		return cli.NewExitError("command error, use --help to see the proper usage.", 1)
 	}
 
-	if len(d.Message) == 0 && len(d.Executable) == 0 {
-		logger.Debug(
-			"validation error, provided neither executable nor message",
-			zap.String("message", d.Message),
-			zap.String("executable", d.Executable),
-		)
+	if len(tmpExec) != 0 {
+		executable, args, err := parseArgStr(tmpExec)
+		if err != nil {
+			logger.Debug(
+				"validation error, executable in wrong string format",
+				zap.String("executable", tmpExec),
+				zap.String("error", err.Error()),
+			)
 
-		return cli.NewExitError("command error, use --help to see the proper usage.", 1)
-	}
+			return cli.NewExitError("command error, use --help to see the proper usage.", 1)
 
-	if len(d.Executable) != 0 {
-		_, err := exec.LookPath(d.Executable)
+		}
+
+		_, err = exec.LookPath(executable)
 		if err != nil {
 			logger.Debug(
 				"validation error, executable doesn't exist (use ./executable if it's a local file)",
@@ -423,6 +425,9 @@ func validatePublish(ctx *cli.Context, d *publishType) error {
 
 			return cli.NewExitError("command error, use --help to see the proper usage.", 1)
 		}
+
+		d.Executable = executable
+		d.ExecutableArgs = args
 	}
 
 	mode := ctx.String("mode")

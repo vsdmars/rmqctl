@@ -17,6 +17,7 @@ go_library(
         "signal.go",
         "validate.go",
         "version.go",
+        "parseArg.go",
     ],
     importpath = "github.com/vsdmars/rmqctl/pkg",
     visibility = ["//visibility:public"],

@@ -3,11 +3,10 @@ package pkg
 import (
 	"bufio"
 	"crypto/tls"
-	"fmt"
 	"io"
 	"net"
+	"os"
 	"os/exec"
-	"runtime"
 	"syscall"
 	"time"
 
@@ -137,14 +136,34 @@ func connect(amqpconn *amqpConnectionType) (*amqp.Connection, error) {
 	return connection, nil
 }
 
-func runExecutable(payload chan<- amqp.Publishing, data *publishType) {
+func publishConsole(payload chan<- amqp.Publishing, data *publishType) {
+	scanner := bufio.NewScanner(os.Stdin)
+
+	for scanner.Scan() {
+		b := scanner.Bytes()
+
+		select {
+		case <-ctx.Done():
+			return
+		default:
+			payload <- amqp.Publishing{
+				ContentType:  "text/plain",
+				Body:         append(b[:0:0], b...),
+				DeliveryMode: data.Mode,
+				MessageId:    "!42!",
+			}
+		}
+	}
+}
+
+func publishExecutable(payload chan<- amqp.Publishing, data *publishType) {
 	pr, pw := io.Pipe()
 	scanner := bufio.NewScanner(pr)
 
 	go func() {
 		defer cancel()
 
-		cmd := exec.CommandContext(ctx, data.Executable)
+		cmd := exec.CommandContext(ctx, data.Executable, data.ExecutableArgs...)
 		cmd.Stdout = pw
 
 		go func() {
@@ -178,13 +197,30 @@ func runExecutable(payload chan<- amqp.Publishing, data *publishType) {
 	}
 }
 
-func burstPublish(
-	gcount int,
+func publishMessage(payload chan<- amqp.Publishing, data *publishType) {
+	p := amqp.Publishing{
+		ContentType:  "text/plain",
+		Body:         []byte(data.Message),
+		DeliveryMode: data.Mode,
+		MessageId:    "!42!",
+	}
+
+	for i := 0; i < data.Burst; i++ {
+		select {
+		case <-ctx.Done():
+			return
+		default:
+			payload <- p
+		}
+	}
+}
+
+func publish(
 	channel *amqp.Channel,
 	payload <-chan amqp.Publishing,
-	data *publishType) chan string {
+	data *publishType) <-chan struct{} {
 
-	status := make(chan string)
+	status := make(chan struct{})
 
 	go func() {
 		defer func() {
@@ -201,7 +237,7 @@ func burstPublish(
 			)
 		}
 
-		status <- fmt.Sprintf("publish goroutine number: %v done.", gcount)
+		status <- struct{}{}
 	}()
 
 	return status
@@ -218,67 +254,28 @@ func publishMsg(conn *amqp.Connection, data *publishType) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	var gcount int
-	if len(data.Executable) != 0 {
-		gcount = 1
-	} else {
-		gcount = int(float64(runtime.NumCPU()) * float64(0.9))
-	}
-
-	logger.Debug(
-		"publish using number of goroutines",
-		zap.String("service", "amqp"),
-		zap.Int("goroutines", gcount),
-	)
-
 	payload := make(chan amqp.Publishing, 1000)
 
 	go func() {
 		defer close(payload)
 
 		if len(data.Executable) != 0 {
-			runExecutable(payload, data)
+			publishExecutable(payload, data)
+		} else if len(data.Message) != 0 {
+			publishMessage(payload, data)
 		} else {
-			p := amqp.Publishing{
-				ContentType:  "text/plain",
-				Body:         []byte(data.Message),
-				DeliveryMode: data.Mode,
-				MessageId:    "!42!",
-			}
-
-			for i := 0; i < data.Burst; i++ {
-				select {
-				case <-ctx.Done():
-					return
-				default:
-					payload <- p
-				}
-			}
+			// publish from console input
+			publishConsole(payload, data)
 		}
 	}()
 
-	var gatherStatus []chan string
-	for i := 0; i < gcount; i++ {
-		gatherStatus = append(
-			gatherStatus,
-			burstPublish(
-				i,
-				channel,
-				payload,
-				data),
-		)
-	}
+	<-publish(
+		channel,
+		payload,
+		data)
 
 	// ContextType:
 	// https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Complete_list_of_MIME_types
-
-	for _, s := range gatherStatus {
-		m := <-s
-		logger.Debug(
-			"publish goroutine done",
-			zap.String("message", m),
-		)
-	}
 
 	logger.Debug(
 		"publish done",
