@@ -475,6 +475,17 @@ Publish messages read from STDIN.
    |Message
     hi, there!
 
+   equivalent to $ rmqctl publish TEST_EXCHANGE_1 RUN -e "/usr/bin/ls -al"
+   $ ls -al | rmqctl publish TEST_EXCHANGE_1 RUN
+   done
+
+   $ rmqctl consume TEST_QUEUE_1
+   |Message
+    drwxr-xr-x 1 vs   users    1566 Mar 16 13:07 Desktop
+    drwxr-xr-x 1 vs   users       0 Feb 11 21:25 Documents
+    drwxr-xr-x 1 vs   users     616 Mar 17 15:34 Downloads
+    drwxr-xr-x 1 vs   users     322 Feb 13 08:40 .fzf
+
 
 Consume message
 ---------------
